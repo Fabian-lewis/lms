@@ -24,9 +24,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($_POST['job_security_number'])) {
         // Professional user login
-        $job_security_number = $_POST['job_security_number'];
-        $stmt = $conn->prepare("SELECT * FROM users WHERE fname = ? AND sname = ? AND job_security_number = ?");
-        $stmt->execute([$fname, $sname, $job_security_number]);
+        try{
+            $job_security_number = $_POST['job_security_number'];
+            $stmt1 = $conn->prepare("SELECT usertype FROM user_type WHERE jobsecnumber = ?");
+            $stmt1->execute([$job_security_number]);
+            $user1 = $stmt1->fetch(PDO::FETCH_ASSOC);
+        }catch (ERRMODE_EXCEPTION $e){
+            die("Connection failed: " . $e->getMessage());
+        }
+        $stmt = $conn->prepare("SELECT * FROM users WHERE fname = ? AND sname = ? AND role = ?");
+        $stmt->execute([$fname, $sname, $user1['usertype']]);
+
+        
     } else {
         // General user login
         $stmt = $conn->prepare("SELECT * FROM users WHERE fname = ? AND sname = ? AND role = 'general_user'");
