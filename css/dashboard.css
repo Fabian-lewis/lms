@@ -41,29 +41,7 @@ body {
 .profile-actions button:hover {
     background-color: #0056b3;
 }
-.parcels-container {
-    padding: 30px;
-    background-color: #fff;
-    margin: 30px auto;
-}
 
-.card-wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    border: 8px solid black;
-    justify-content: center;
-    gap: 20px;
-}
-
-.card {
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    width: 300px;
-    text-align: center;
-}
 
 .modal {
     display: none;
@@ -101,6 +79,34 @@ body {
 }
 
 
+.parcels-container {
+    padding: 30px;
+    background-color: #fff;
+    margin: 30px auto;
+
+}
+
+.card-wrapper {
+    margin: 20px auto;
+    display:flex;
+    flex-wrap: wrap;
+    border: 1px solid black;
+    border-radius: 8px; 
+    justify-content: space-evenly;
+    gap: 20px;
+    background-color: #333;
+}
+
+.card {
+    margin: 10px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 300px;
+    text-align: center;
+}
 
 
 .card h3 {
