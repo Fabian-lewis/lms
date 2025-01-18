@@ -66,7 +66,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <div class="container">
-        <h2>Login Page</h2>
+    <h2>Login Page</h2>
+    </div>
+    <div class="container">
+        
 
         <?php if (!empty($error)) { echo "<p class='error'>$error</p>"; } ?>
 
@@ -89,7 +92,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <!-- Professional User Login -->
-            <div class="form-section">
+            
+        </div>
+    </div>
+    <div class="container">
+    <?php if (!empty($error)) { echo "<p class='error'>$error</p>"; } ?>
+    <div class="forms">
+    <div class="form-section">
                 <h3>Professional User Login</h3>
                 <form action="login.php" method="POST">
                     <label for="fname">First Name:</label>
@@ -107,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <button type="submit">Login</button>
                 </form>
             </div>
-        </div>
+    </div>
     </div>
 </body>
 </html>

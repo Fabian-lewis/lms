@@ -27,6 +27,40 @@ if($user){
     $_SESSION['sname'] = $user['sname'];
 }
 // Pass data to the profile page
+try {
+    $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", 'postgres', $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
+}
+$id = $_SESSION['user_id'];
+$query = "SELECT
+                p.id,
+                p.coordinates,
+                p.datecreated,
+                p.titledeedno,
+                o.date_started,
+                o.status_id
+                FROM
+                ownership o
+                JOIN
+                parcel p
+                ON
+                o.titledeed_no = p.titledeedno
+                WHERE
+                o.owner_id = :owner_id";
+$stmt2 = $conn->prepare($query);
+
+// Bind the parameter
+$stmt2->bindValue(':owner_id', $id, PDO::PARAM_INT);
+
+// Execute the query
+$stmt2->execute();
+
+// Fetch results
+$parcels = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
+
 ?>
 
 
@@ -62,6 +96,22 @@ if($user){
             <button id="logoutBtn">Logout</button>
         </div>
     </div>
+    
+    <div class="parcels-container">
+        <h2>Your Lands</h2>
+        <div class="card-wrapper">
+            <?php foreach ($parcels as $parcel): ?>
+                <div class="card">
+                    <h3>Parcel: <?php echo $parcel['titledeedno']; ?></h3>
+                    <p><strong>Coordinates:</strong> <?php echo $parcel['coordinates']; ?></p>
+                    <p><strong>Date Created:</strong> <?php echo $parcel['datecreated']; ?></p>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+
+    
 
     <!-- Modal for Editing Profile -->
     <div class="modal" id="editProfileModal">
