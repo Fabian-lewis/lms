@@ -105,6 +105,8 @@ $parcels = $stmt2->fetchAll(PDO::FETCH_ASSOC);
                     <h3>Parcel: <?php echo $parcel['titledeedno']; ?></h3>
                     <p><strong>Coordinates:</strong> <?php echo $parcel['coordinates']; ?></p>
                     <p><strong>Date Created:</strong> <?php echo $parcel['datecreated']; ?></p>
+                    <a href="parcelDetails.php?parcel_id=<?php echo $parcel['id']; ?>" class="btn btn-primary">View Details</a>
+
                 </div>
             <?php endforeach; ?>
         </div>

@@ -131,3 +131,17 @@ body {
         width: 100%;
     }
 }
+#view {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+#view button:hover {
+    background-color: #555;
+}
