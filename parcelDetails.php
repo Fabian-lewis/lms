@@ -35,16 +35,25 @@ if (!$parcel) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parcel Details</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <link rel="stylesheet" href="css/parcelDetails.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
-    <style>
-        #map { height: 400px; }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    
 </head>
 <body>
-    <h1>Details for Parcel <?php echo htmlspecialchars($parcel['id']); ?></h1>
-    <p><strong>Title Deed Number:</strong> <?php echo htmlspecialchars($parcel['titledeedno']); ?></p>
-    <p><strong>Date Created:</strong> <?php echo htmlspecialchars($parcel['datecreated']); ?></p>
-    <div id="map"></div>
+    <div class="container">
+        <!-- Parcel Details -->
+        <div class="details-card">
+            <h1>Parcel Details</h1>
+            <p><strong>Title Deed Number:</strong> <?php echo htmlspecialchars($parcel['titledeedno']); ?></p>
+            <p><strong>Date Created:</strong> <?php echo htmlspecialchars($parcel['datecreated']); ?></p>
+            <p><strong>Land Type ID:</strong> <?php echo htmlspecialchars($parcel['landtypeid']); ?></p>
+            <p><strong>Status ID:</strong> <?php echo htmlspecialchars($parcel['statusid']); ?></p>
+        </div>
+
+        <!-- Map -->
+        <div id="map"></div>
+    </div>
 
     <script>
         const map = L.map('map').setView([0, 0], 13);
@@ -60,3 +69,4 @@ if (!$parcel) {
     </script>
 </body>
 </html>
+

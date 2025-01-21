@@ -80,6 +80,19 @@ $parcels = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 </script>
 </head>
 <body>
+<header>
+        <div class="logo">
+            <img src="images/lms logo2.png" alt="LMS Logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.php">Home</a></li>
+                <li><a href="profile.php">Profile</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
     <div class="profile-container">
         <h2>User Profile</h2>
         <div class="profile-info">
@@ -96,7 +109,6 @@ $parcels = $stmt2->fetchAll(PDO::FETCH_ASSOC);
             <button id="logoutBtn">Logout</button>
         </div>
     </div>
-    
     <div class="parcels-container">
         <h2>Your Lands</h2>
         <div class="card-wrapper">
@@ -112,9 +124,16 @@ $parcels = $stmt2->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 
+    <?php if($_SESSION['role'] === 'surveyor'): ?>
+        <div class="parcels-container">
+            <h2>Land Division Mutation Forms</h2>
+            <a href="add_parcel.php" class="btn btn-primary">Add Parcel</a>
+        </div>
+    <div class="parcels-container">
+        <h2>Ownership Change Mutation Forms</h2>
 
-    
-
+    </div>
+    <?php endif; ?>
     <!-- Modal for Editing Profile -->
     <div class="modal" id="editProfileModal">
         <div class="modal-content">
@@ -149,5 +168,8 @@ $parcels = $stmt2->fetchAll(PDO::FETCH_ASSOC);
             editProfileModal.style.display = 'none';
         });
     </script>
+
+    </main>
+    
 </body>
 </html>
