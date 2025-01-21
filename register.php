@@ -21,10 +21,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sname = $_POST['sname'];
     $role = $_POST['role'];
     $password = $_POST['password'];
+    $nat_id = $_POST['nat_id'];
     $confirm_password = $_POST['confirm_password'];
 
     // Basic validation
-    if (empty($fname) || empty($sname) || empty($role) || empty($password) || empty($confirm_password)) {
+    if (empty($fname) || empty($sname) || empty($role) || empty($password) || empty($confirm_password) || empty($nat_id)) {
         die("All fields are required.");
     }
 
@@ -37,11 +38,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Insert data into the users table
     try {
-        $stmt = $conn->prepare("INSERT INTO users (fname, sname, role, password) VALUES (:fname, :sname, :role, :password)");
+        $stmt = $conn->prepare("INSERT INTO users (fname, sname, role, password, nat_id) VALUES (:fname, :sname, :role, :password, :nat_id)");
         $stmt->bindParam(':fname', $fname);
         $stmt->bindParam(':sname', $sname);
         $stmt->bindParam(':role', $role);
         $stmt->bindParam(':password', $hashed_password);
+        $stmt->bindParam(':nat_id', $nat_id);
         
         if ($stmt->execute()) {
             echo '<script>
@@ -81,6 +83,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <label for="sname">Surname:</label>
             <input type="text" id="sname" name="sname" required>
+
+            <label for="nat_id">National ID:</label>
+            <input type="text" id="nat_id" name="nat_id" required>
 
             <label for="role">Role:</label>
             <select id="role" name="role" required>
