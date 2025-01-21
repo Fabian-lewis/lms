@@ -156,7 +156,7 @@ nav ul li a {
         width: 100%;
     }
 }
-#view {
+.new {
     background-color: #333;
     color: white;
     border: none;
@@ -167,6 +167,6 @@ nav ul li a {
     transition: background-color 0.3s;
 }
 
-#view button:hover {
+.new button:hover {
     background-color: #555;
 }

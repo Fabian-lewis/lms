@@ -127,10 +127,11 @@ $parcels = $stmt2->fetchAll(PDO::FETCH_ASSOC);
     <?php if($_SESSION['role'] === 'surveyor'): ?>
         <div class="parcels-container">
             <h2>Land Division Mutation Forms</h2>
-            <a href="add_parcel.php" class="btn btn-primary">Add Parcel</a>
+            <button class="new">Create New Form</button>
         </div>
     <div class="parcels-container">
         <h2>Ownership Change Mutation Forms</h2>
+        <button class="new">Create New Form</button>
 
     </div>
     <?php endif; ?>
