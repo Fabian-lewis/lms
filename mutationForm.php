@@ -1,3 +1,70 @@
+<?php
+// Start session and check user authentication
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: dashboard.php");
+    exit();
+}
+
+// Check if the request method is POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $mutation_type = $_POST['mutation_type'];
+
+    if ($mutation_type === 'division') {
+        // Handle land division logic here (if needed)
+    } else if ($mutation_type == 'ownership_change') {
+        // Retrieve form data
+        $title_deed = $_POST['title_deed'];
+        $current_owner = $_POST['current_owner'];
+        $new_owner = $_POST['new_owner'];
+        $surveyor_id = $_SESSION['user_id'];
+        $status_id = 3; // Default status for "submitted"
+        $date_submitted = date('Y-m-d'); // Format date as YYYY-MM-DD
+
+        // Database connection details
+        $host = "localhost";
+        $port = "5432";
+        $dbname = "klms";
+        $user = "postgres";
+        $password = "gredev";
+
+        try {
+            // Establish database connection
+            $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", $user, $password);
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            // Prepare the SQL query
+            $stmt = $conn->prepare("INSERT INTO ownership_form (titledeed_no, current_owner_natid, proposed_owner_natid, surveyor_id, status_id, date_submitted) 
+                                    VALUES (:titledeed_no, :current_owner_natid, :proposed_owner_natid, :surveyor_id, :status_id, :date_submitted)");
+
+            // Bind parameters to the query
+            $stmt->bindParam(':titledeed_no', $title_deed);
+            $stmt->bindParam(':current_owner_natid', $current_owner);
+            $stmt->bindParam(':proposed_owner_natid', $new_owner);
+            $stmt->bindParam(':surveyor_id', $surveyor_id);
+            $stmt->bindParam(':status_id', $status_id);
+            $stmt->bindParam(':date_submitted', $date_submitted);
+
+            // Execute the query and check for success
+            if ($stmt->execute()) {
+                echo '<script>
+                        alert("Success! Ownership mutation details have been recorded successfully.");
+                      </script>';
+            } else {
+                echo '<script>
+                        alert("Error: Could not record the mutation details.");
+                      </script>';
+            }
+        } catch (PDOException $e) {
+            // Handle database connection or query errors
+            die("Database error: " . $e->getMessage());
+        }
+    }
+}
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,7 +78,7 @@
     <div class="container">
     <div class="left-section">
         <h2>Mutation Form</h2>
-        <form action="process_mutation.php" method="POST">
+        <form action="mutationForm.php" method="POST">
             <div class="form-group">
                 <label for="title_deed">Title Deed:</label>
                 <input type="text" id="title_deed" name="title_deed" placeholder="Enter Title Deed">
@@ -32,6 +99,7 @@
                 <textarea id="details" name="details" rows="5" placeholder="Enter additional details..."></textarea>
             </div>
             -->
+            <button class="submit-button">Submit</button>
         </form>
         
     </div>
@@ -68,7 +136,7 @@
     </script>
     <div class="right-section">
         <div id="map"></div>
-        <button class="submit-button">Submit</button>
+        
         
     </div>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

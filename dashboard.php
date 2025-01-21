@@ -33,8 +33,8 @@ try {
 } catch (PDOException $e) {
     die("Connection failed: " . $e->getMessage());
 }
-$id = $_SESSION['user_id'];
-$query = "SELECT
+    $id = $_SESSION['user_id'];
+    $query = "SELECT
                 p.id,
                 p.coordinates,
                 p.datecreated,
@@ -49,16 +49,39 @@ $query = "SELECT
                 o.titledeed_no = p.titledeedno
                 WHERE
                 o.owner_id = :owner_id";
-$stmt2 = $conn->prepare($query);
+    $stmt2 = $conn->prepare($query);
 
-// Bind the parameter
-$stmt2->bindValue(':owner_id', $id, PDO::PARAM_INT);
+    // Bind the parameter
+    $stmt2->bindValue(':owner_id', $id, PDO::PARAM_INT);
 
-// Execute the query
-$stmt2->execute();
+    // Execute the query
+    $stmt2->execute();
 
-// Fetch results
-$parcels = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+    // Fetch results
+    $parcels = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
+    //Ownership change Mutation Form
+    $query1 = "SELECT
+                o.id,
+                o.titledeed_no,
+                o.date_submitted,
+                o.current_owner_natid,
+                CONCAT(curr_owner.fname, ' ', curr_owner.sname) AS current_owner_name,
+                o.proposed_owner_natid,
+                CONCAT(prop_owner.fname, ' ', prop_owner.sname) AS proposed_owner_name,
+                s.status
+                FROM
+                ownership_form o
+                JOIN status s ON o.status_id = s.id
+                JOIN users curr_owner ON o.current_owner_natid = curr_owner.nat_id
+                JOIN users prop_owner ON o.proposed_owner_natid = prop_owner.nat_id
+                WHERE
+                o.surveyor_id = :owner_id";
+    $stmt3 = $conn->prepare($query1);
+    $stmt3->bindValue(':owner_id', $id, PDO::PARAM_INT);
+    $stmt3->execute();
+    $mutationForms = $stmt3->fetchAll(PDO::FETCH_ASSOC);
+
 
 
 ?>
@@ -130,12 +153,26 @@ $parcels = $stmt2->fetchAll(PDO::FETCH_ASSOC);
             <a href="mutationForm.php"><button class="new">Create New Form</button></a>
             
         </div>
-    <div class="parcels-container">
-        <h2>Ownership Change Mutation Forms</h2>
-        <a href="mutationForm.php"><button class="new">Create New Form</button></a>
+        <div class="parcels-container">
+            <h2>Ownership Change Mutation Forms</h2>
+            <a href="mutationForm.php"><button class="new">Create New Form</button></a>
+            <div class="card-wrapper">
+                <?php foreach ($mutationForms as $form): ?>
+                    <div class="card">
+                        <h3>Form ID: <?php echo $form['id']; ?></h3>
+                        <p><strong>Date Submitted:</strong> <?php echo $form['date_submitted']; ?></p>
+                        <p><strong>Current Owner:</strong> <?php echo $form['current_owner_name']; ?></p>
+                        <p><strong>Current Owner Nat ID:</strong><?php echo $form['current_owner_natid']?></p>
+                        <p><strong>Proposed Owner:</strong> <?php echo $form['proposed_owner_name']; ?></p>
+                        <p><strong>Proposed Owner Nat ID:</strong><?php echo $form['proposed_owner_natid']?></p>
+                        <p><strong>Status:</strong> <?php echo $form['status']; ?></p>
+
+                    </div>
+                <?php endforeach; ?>
+
         
 
-    </div>
+        </div>
     <?php endif; ?>
     <!-- Modal for Editing Profile -->
     <div class="modal" id="editProfileModal">
