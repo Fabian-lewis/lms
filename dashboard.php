@@ -82,6 +82,25 @@ try {
     $stmt3->execute();
     $mutationForms = $stmt3->fetchAll(PDO::FETCH_ASSOC);
 
+    //Division Mutation
+    $query2 = "SELECT
+                d.id,
+                d.titledeed,
+                d.number_of_divs,
+                d.date_submitted,
+                d.surveyor_id,
+                d.status_id,
+                s.status
+                FROM
+                division_form d
+                JOIN status s ON d.status_id = s.id
+                WHERE
+                d.surveyor_id = :owner_id";
+    $stmt4 = $conn->prepare($query2);
+    $stmt4->bindValue(':owner_id', $id, PDO::PARAM_INT);
+    $stmt4->execute();
+    $divisionForms = $stmt4->fetchAll(PDO::FETCH_ASSOC);
+
 
 
 ?>
@@ -151,6 +170,16 @@ try {
         <div class="parcels-container">
             <h2>Land Division Mutation Forms</h2>
             <a href="mutationForm.php"><button class="new">Create New Form</button></a>
+            <div class="card-wrapper">
+                <?php foreach ($divisionForms as $form): ?>
+                    <div class="card">
+                        <h3>Form ID: <?php echo $form['id']; ?></h3>
+                        <p><strong>Date Submitted:</strong> <?php echo $form['date_submitted']; ?></p>
+                        <p><strong>Title Deed:</strong> <?php echo $form['titledeed']; ?></p>
+                        <p><strong>Number of Divisions:</strong> <?php echo $form['number_of_divs']; ?></p>
+                        <p><strong>Status:</strong> <?php echo $form['status']; ?></p>
+                    </div>
+                <?php endforeach; ?>
             
         </div>
         <div class="parcels-container">
