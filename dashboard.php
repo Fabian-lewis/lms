@@ -40,13 +40,13 @@ try {
                 p.datecreated,
                 p.titledeedno,
                 o.date_started,
-                o.status_id
+                s.status,
+                l.landtype
                 FROM
                 ownership o
-                JOIN
-                parcel p
-                ON
-                o.titledeed_no = p.titledeedno
+                JOIN parcel p ON o.titledeed_no = p.titledeedno
+                JOIN status s ON o.status_id = s.id
+                JOIN landtype l ON p.landtypeid = l.id
                 WHERE
                 o.owner_id = :owner_id";
     $stmt2 = $conn->prepare($query);
@@ -143,7 +143,7 @@ try {
             <p><strong>First Name:</strong> <?php echo htmlspecialchars($_SESSION['fname']); ?></p>
             <p><strong>Surname:</strong> <?php echo htmlspecialchars($_SESSION['sname']); ?></p>
             <p><strong>Role:</strong> <?php echo htmlspecialchars($_SESSION['role']); ?></p>
-                <p><strong>Job Security Number:</strong> <span id="jobSecurity">N/A</span></p>
+            <p><strong>Job Security Number:</strong> <span id="jobSecurity">N/A</span></p>
             </div>
         </div>
         <div class="profile-actions">
@@ -159,6 +159,8 @@ try {
                     <h3>Parcel: <?php echo $parcel['titledeedno']; ?></h3>
                     <p><strong>Coordinates:</strong> <?php echo $parcel['coordinates']; ?></p>
                     <p><strong>Date Created:</strong> <?php echo $parcel['datecreated']; ?></p>
+                    <p><strong>Land Type:</strong> <?php echo $parcel['landtype']; ?></p>
+                    <p><strong>Status:</strong> <?php echo $parcel['status']; ?></p>
                     <a href="parcelDetails.php?parcel_id=<?php echo $parcel['id']; ?>" class="btn btn-primary">View Details</a>
 
                 </div>
