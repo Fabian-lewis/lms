@@ -23,20 +23,26 @@ $query = "SELECT
                 o.date_started,
                 s.status,
                 l.landtype,
-                CONCAT(owner.fname, ' ', owner.sname) AS owner_name
-                FROM
+                CONCAT(owner.fname, ' ', owner.sname) AS owner_name,
+                CASE
+                    WHEN l.landtype = 'leasehold' THEN lf.duration_months
+                    WHEN l.landtype = 'freehold' THEN null
+                    ELSE null
+                END AS duration
+            FROM
                 parcel p
-                JOIN ownership o ON p.titledeedno = o.titledeed_no
-                JOIN status s ON o.status_id = s.id
-                JOIN landtype l ON p.landtypeid = l.id
-                JOIN users owner ON o.owner_id = owner.id
-                WHERE
+            JOIN ownership o ON p.titledeedno = o.titledeed_no
+            JOIN status s ON o.status_id = s.id
+            JOIN landtype l ON p.landtypeid = l.id
+            JOIN users owner ON o.owner_id = owner.id
+            LEFT JOIN lease_form lf ON p.titledeedno = lf.titledeed AND l.landtype = 'leasehold'
+            WHERE
                 p.id = :parcel_id";
 
-//$query = "SELECT * FROM parcel WHERE id = :parcel_id";
 $stmt = $conn->prepare($query);
 $stmt->bindParam(':parcel_id', $parcel_id, PDO::PARAM_INT);
 $stmt->execute();
+
 
 $parcel = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -68,6 +74,7 @@ if (!$parcel) {
             <p><strong>Owner:</strong> <?php echo htmlspecialchars($parcel['owner_name']); ?></p>
             <p><strong>Land Type:</strong> <?php echo htmlspecialchars($parcel['landtype']); ?></p>
             <p><strong>Status:</strong> <?php echo htmlspecialchars($parcel['status']); ?></p>
+            <p><strong>Duration:</strong> <?php echo htmlspecialchars($parcel['duration']); ?></p>
 
         </div>
 
