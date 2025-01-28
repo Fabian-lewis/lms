@@ -62,74 +62,37 @@ if (!$parcel) {
     <link rel="stylesheet" href="css/parcelDetails.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-    
-</head>
-<body>
-    <div class="container">
-        <!-- Parcel Details -->
-        <?php
-            if ($parcel['landtype'] === 'leasehold') {
-                echo '<script>leaseAmount();</script>';
-                echo '<script>Alert("The details are being worked on")</script>';
-            }
-        ?>
-        <div id= "parcel-details"class="details-card">
-            <h1>Parcel Details</h1>
-            <p><strong>Title Deed Number:</strong> <?php echo htmlspecialchars($parcel['titledeedno']); ?></p>
-            <p><strong>Date Created:</strong> <?php echo htmlspecialchars($parcel['datecreated']); ?></p>
-            <p><strong>Owner:</strong> <?php echo htmlspecialchars($parcel['owner_name']); ?></p>
-            <p><strong>Land Type:</strong> <?php echo htmlspecialchars($parcel['landtype']); ?></p>
-            <p><strong>Status:</strong> <?php echo htmlspecialchars($parcel['status']); ?></p>
-            <p><strong>Duration:</strong> <?php echo htmlspecialchars($parcel['duration']); ?></p>
-            <p><strong>Ending Date:</strong> <script>document.write(ending_date);</script></p>
-
-            
-
-        </div>
-
-        <!-- Map -->
-        <div id="map"></div>
-    </div>
 
     <script>
-        const map = L.map('map').setView([0, 0], 13);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19
-        }).addTo(map);
-
-        const parcelCoordinates = <?php echo $parcel['coordinates']; ?>;
-        const geoJsonLayer = L.geoJSON(parcelCoordinates).addTo(map);
-
-        map.fitBounds(geoJsonLayer.getBounds());
         function calculateTotalAmount(startDate, durationMonths, rates) {
-    const start = new Date(startDate); // Lease start date
-    const totalAmount = {};
+        alert("Calculating total amount");
+        const start = new Date(startDate); // Lease start date
+        const totalAmount = {};
 
-    for (let i = 0; i < durationMonths; i++) {
-        const currentDate = new Date(start);
-        currentDate.setMonth(start.getMonth() + i); // Move to the next month
+        for (let i = 0; i < durationMonths; i++) {
+            const currentDate = new Date(start);
+            currentDate.setMonth(start.getMonth() + i); // Move to the next month
 
-        const year = currentDate.getFullYear(); // Get the current year
-        const month = currentDate.getMonth() + 1; // Get the current month (1-12)
+            const year = currentDate.getFullYear(); // Get the current year
+            const month = currentDate.getMonth() + 1; // Get the current month (1-12)
 
-        if (!rates[year]) {
-            console.error(`No rate found for year ${year}`);
-            continue;
+            if (!rates[year]) {
+                console.error(`No rate found for year ${year}`);
+                continue;
+            }
+
+            const monthlyRate = rates[year] / 12; // Calculate monthly rate for the year
+
+            if (!totalAmount[year]) {
+                totalAmount[year] = 0; // Initialize the year's total if it doesn't exist
+            }
+
+            totalAmount[year] += monthlyRate; // Add the monthly rate to the year's total
+            //alert("Year: " + year + " Month: " + month + " Amount: " + monthlyRate);
         }
 
-        const monthlyRate = rates[year] / 12; // Calculate monthly rate for the year
-
-        if (!totalAmount[year]) {
-            totalAmount[year] = 0; // Initialize the year's total if it doesn't exist
-        }
-
-        totalAmount[year] += monthlyRate; // Add the monthly rate to the year's total
-        alert("Year: " + year + " Month: " + month + " Amount: " + monthlyRate);
+        return totalAmount;
     }
-
-    return totalAmount;
-}
 
 function leaseAmount() {
     const titledeed = "<?php echo $parcel['titledeedno']; ?>"; // Get the title deed number from PHP
@@ -151,15 +114,15 @@ function leaseAmount() {
 
         // Display the result
         const leaseDetails = document.createElement('div');
-        leaseDetails.innerHTML = '<h3>Lease Payment Breakdown</h3>';
+        //leaseDetails.innerHTML = '<h3>Lease Payment Breakdown</h3>';
 
         let total = 0;
         for (const [year, amount] of Object.entries(totalAmount)) {
-            leaseDetails.innerHTML += `<p><strong>Year ${year}:</strong> ${amount.toFixed(2)}</p>`;
+            //leaseDetails.innerHTML += `<p><strong>Year ${year}:</strong> ${amount.toFixed(2)}</p>`;
             total += amount;
         }
 
-        leaseDetails.innerHTML += `<p><strong>Total Amount:</strong> ${total.toFixed(2)}</p>`;
+        leaseDetails.innerHTML += `<p><strong>Expected Rates Amount:</strong> ${total.toFixed(2)}</p>`;
 
         // Append the lease details to the details card
         document.querySelector('.details-card').appendChild(leaseDetails);
@@ -169,6 +132,51 @@ function leaseAmount() {
     });
 }
     </script>
+    
+</head>
+<body>
+    <div class="container">
+        <!-- Parcel Details -->
+        <?php
+            if ($parcel['landtype'] === 'leasehold') {
+                echo '<script>leaseAmount();</script>';
+                echo '<script>alert("The details are being worked on")</script>';
+            }
+        ?>
+        <div id= "parcel-details"class="details-card">
+            <h1>Parcel Details</h1>
+            <p><strong>Title Deed Number:</strong> <?php echo htmlspecialchars($parcel['titledeedno']); ?></p>
+            <p><strong>Date Created:</strong> <?php echo htmlspecialchars($parcel['datecreated']); ?></p>
+            <p><strong>Owner:</strong> <?php echo htmlspecialchars($parcel['owner_name']); ?></p>
+            <p><strong>Land Type:</strong> <?php echo htmlspecialchars($parcel['landtype']); ?></p>
+            <p><strong>Status:</strong> <?php echo htmlspecialchars($parcel['status']); ?></p>
+            <p><strong>Duration:</strong> <?php echo htmlspecialchars($parcel['duration']); ?></p>
+            <p><strong>Ending Date:</strong> <script>document.write(ending_date);</script></p>
+
+            
+
+        </div>
+
+
+        <!-- Map -->
+        <div id="map"></div>
+    </div>
+    
+
+    <script>
+        const map = L.map('map').setView([0, 0], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19
+        }).addTo(map);
+
+        const parcelCoordinates = <?php echo $parcel['coordinates']; ?>;
+        const geoJsonLayer = L.geoJSON(parcelCoordinates).addTo(map);
+
+        map.fitBounds(geoJsonLayer.getBounds());
+    </script>
+
+    
 </body>
 </html>
 
