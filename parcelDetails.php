@@ -122,7 +122,17 @@ function leaseAmount() {
             total += amount;
         }
 
+        end_date = new Date(startDate) + durationMonths;
+
+        // Format the end date to show only the date (YYYY-MM-DD)
+        //let formatted_end_date = end_date.toISOString().split('T')[0];
+
+        leaseDetails.innerHTML = `<p><strong>End Date:</strong> ${end_date}</p>`;
+
+        
+
         leaseDetails.innerHTML += `<p><strong>Expected Rates Amount:</strong> ${total.toFixed(2)}</p>`;
+        
 
         // Append the lease details to the details card
         document.querySelector('.details-card').appendChild(leaseDetails);
@@ -140,9 +150,10 @@ function leaseAmount() {
         <?php
             if ($parcel['landtype'] === 'leasehold') {
                 echo '<script>leaseAmount();</script>';
-                echo '<script>alert("The details are being worked on")</script>';
+                //echo '<script>alert("The details are being worked on")</script>';
             }
         ?>
+        
         <div id= "parcel-details"class="details-card">
             <h1>Parcel Details</h1>
             <p><strong>Title Deed Number:</strong> <?php echo htmlspecialchars($parcel['titledeedno']); ?></p>
@@ -150,8 +161,12 @@ function leaseAmount() {
             <p><strong>Owner:</strong> <?php echo htmlspecialchars($parcel['owner_name']); ?></p>
             <p><strong>Land Type:</strong> <?php echo htmlspecialchars($parcel['landtype']); ?></p>
             <p><strong>Status:</strong> <?php echo htmlspecialchars($parcel['status']); ?></p>
-            <p><strong>Duration:</strong> <?php echo htmlspecialchars($parcel['duration']); ?></p>
-            <p><strong>Ending Date:</strong> <script>document.write(ending_date);</script></p>
+            <?php if ($parcel['landtype'] === 'leasehold') : ?>
+                <p><strong>Lease Duration:</strong> <?php echo htmlspecialchars($parcel['duration']); ?> months</p>
+                <p><strong>Ending Date:</strong> <script>document.write(start+durationMonths);</script></p>
+            <?php endif; ?>
+            
+           
 
             
 
