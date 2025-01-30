@@ -144,7 +144,7 @@ function leaseAmount() {
     </script>
     
 </head>
-<body>
+<body style="background-color: #2C3E50">
     <div class="container">
         <!-- Parcel Details -->
         <?php

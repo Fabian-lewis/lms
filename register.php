@@ -75,6 +75,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </script>
 </head>
 <body>
+    <header>
+    <div class="logo">
+            <img src="images/lms logo2.png" alt="LMS Logo">
+        </div>
+        <div class="head">
+            <h2>Registration</h2>
+        </div>
+
+    </header>
+    <main>
     <div class="registration-container">
         <h2>Registration Page</h2>
         <form action="register.php" method="POST">
@@ -104,6 +114,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit">Register</button>
         </form>
     </div>
+    </main>
+    
 
     
 </body>
