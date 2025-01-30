@@ -101,6 +101,28 @@ try {
     $stmt4->execute();
     $divisionForms = $stmt4->fetchAll(PDO::FETCH_ASSOC);
 
+    // Division Mutatition Forms for Ministry officials
+    $query3 = "SELECT
+                d.id,
+                d.titledeed,
+                d.number_of_divs,
+                d.date_submitted,
+                d.divisions_coordinates,
+                CONCAT(surveyor.fname, ' ', surveyor.sname) AS surveyor,
+                d.surveyor_id,
+                d.status_id,
+                s.status
+                FROM
+                division_form d
+                JOIN status s ON d.status_id = s.id
+                JOIN users surveyor ON d.surveyor_id = surveyor.id
+                WHERE
+                d.status_id = :status_id";
+    $stmt5 = $conn->prepare($query3);
+    $stmt5->bindValue(':status_id', 3, PDO::PARAM_INT);
+    $stmt5->execute();
+    $submittedDivisionForms = $stmt5->fetchAll(PDO::FETCH_ASSOC);
+
 
 
 ?>
@@ -205,6 +227,25 @@ try {
 
         </div>
     <?php endif; ?>
+
+    <?php if($_SESSION['role'] === 'ministry_official'): ?>
+        <div class="parcels-container">
+            <h2>Land Division Mutation Forms</h2>
+            <a href="mutationForm.php"><button class="new">Create New Form</button></a>
+            <div class="card-wrapper">
+                <?php foreach ($submittedDivisionForms as $form): ?>
+                    <div class="card">
+                        <h3>Form ID: <?php echo $form['id']; ?></h3>
+                        <p><strong>Date Submitted:</strong> <?php echo $form['date_submitted']; ?></p>
+                        <p><strong>Surveyor:</strong> <?php echo $form['surveyor']; ?></p>
+                        <p><strong>Title Deed:</strong> <?php echo $form['titledeed']; ?></p>
+                        <p><strong>Number of Divisions:</strong> <?php echo $form['number_of_divs']; ?></p>
+                        <p><strong>Status:</strong> <?php echo $form['status']; ?></p>
+                    </div>
+                <?php endforeach; ?>
+            
+        </div>
+    <?php endif; ?> 
     <!-- Modal for Editing Profile -->
     <div class="modal" id="editProfileModal">
         <div class="modal-content">
