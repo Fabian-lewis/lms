@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background-color: #2C3E50;
     margin: 0;
     padding: 0;
 }
@@ -34,7 +34,7 @@ nav ul li a {
     max-width: 600px;
     margin: 50px auto;
     padding: 20px;
-    background: #fff;
+    background: #F5E8DD;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     text-align: center;
@@ -106,7 +106,7 @@ nav ul li a {
 
 .parcels-container {
     padding: 30px;
-    background-color: #fff;
+    background-color: #8B5E3C;
     margin: 30px auto;
 
 }
@@ -119,12 +119,12 @@ nav ul li a {
     border-radius: 8px; 
     justify-content: space-evenly;
     gap: 20px;
-    background-color: #fff;
+    background-color: #2C3E50;
 }
 
 .card {
     margin: 10px;
-    background-color: #ffffff;
+    background-color: #F5E8DD;
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);

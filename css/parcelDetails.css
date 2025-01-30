@@ -2,10 +2,8 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color:#4285F4;
-    background-color: var(--background);
-    
-    color: #0F3460;
+    background-color:#2C3E50;
+    color: #2C3E50;
 }
 
 .container {
@@ -15,7 +13,7 @@ body {
     margin: 20px auto;
     padding: 20px;
     max-width: 1200px;
-    background-color: #4285F4;
+    background-color: #8B5E3C;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
 }
@@ -23,7 +21,7 @@ body {
 .details-card {
     flex: 1;
     padding: 20px;
-    background-color: #34A853;
+    background-color: #F5E8DD;
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);

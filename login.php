@@ -65,9 +65,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
-    <div class="container">
-    <h2>Login Page</h2>
-    </div>
+    <header>
+        <div class="logo">
+            <img src="images/lms logo2.png" alt="LMS Logo">
+        </div>
+        <div class="head">
+            <h2>Login Page</h2>
+        </div>
+    </header>
+
+    <main>
     <div class="container">
         
 
@@ -118,5 +125,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
     </div>
     </div>
+    </main>
+    
+   
 </body>
 </html>
