@@ -114,6 +114,7 @@ function leaseAmount() {
 
         // Display the result
         const leaseDetails = document.createElement('div');
+
         //leaseDetails.innerHTML = '<h3>Lease Payment Breakdown</h3>';
 
         let total = 0;
@@ -132,6 +133,7 @@ function leaseAmount() {
         
 
         leaseDetails.innerHTML += `<p><strong>Expected Rates Amount:</strong> ${total.toFixed(2)}</p>`;
+        leaseDetails.innerHTML += '<a href="pay_rates.php"><button>Pay Rates</button></a>';
         
 
         // Append the lease details to the details card
