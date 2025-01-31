@@ -12,41 +12,39 @@ try {
     die("Connection failed: " . $e->getMessage());
 }
 
-// Get parcel ID from URL
-$parcel_id = $_GET['parcel_id'];
+// Get FormID ID from URL
+$form_id = $_GET['form_id'];
+$form_type = $_GET['form_type'];
 
-$query = "SELECT
-                p.id,
-                p.coordinates,
-                p.datecreated,
-                p.titledeedno,
-                o.date_started,
-                s.status,
-                l.landtype,
-                CONCAT(owner.fname, ' ', owner.sname) AS owner_name,
-                CASE
-                    WHEN l.landtype = 'leasehold' THEN lf.duration_months
-                    WHEN l.landtype = 'freehold' THEN null
-                    ELSE null
-                END AS duration
-            FROM
-                parcel p
-            JOIN ownership o ON p.titledeedno = o.titledeed_no
-            JOIN status s ON o.status_id = s.id
-            JOIN landtype l ON p.landtypeid = l.id
-            JOIN users owner ON o.owner_id = owner.id
-            LEFT JOIN lease_form lf ON p.titledeedno = lf.titledeed AND l.landtype = 'leasehold'
-            WHERE
-                p.id = :parcel_id";
+if($form_type =="ownership"){
+    $query1 = "SELECT
+                o.id,
+                o.titledeed_no,
+                o.current_owner_natid,
+                o.proposed_owner_natid,
+                o.date_submitted,
+                CONCAT(curr_owner.fname, ' ', curr_owner.sname) AS current_owner_name,
+                CONCAT(prop_owner.fname, ' ', prop_owner.sname) AS proposed_owner_name,
+                CONCAT(surveyor.fname, ' ', surveyor.sname) AS surveyor,
+                o.surveyor_id,
+                o.status_id,
+                s.status
+                FROM
+                ownership_form o
+                JOIN status s ON o.status_id = s.id
+                JOIN users surveyor ON o.surveyor_id = surveyor.id
+                JOIN users curr_owner ON o.current_owner_natid = curr_owner.nat_id
+                JOIN users prop_owner ON o.proposed_owner_natid = prop_owner.nat_id
+                WHERE
+                o.id = :form_id";
+    $stmt6 = $conn->prepare($query1);
+    $stmt6->bindValue(':form_id', $form_id, PDO::PARAM_INT);
+    $stmt6->execute();
+    $submittedForm = $stmt6->fetchAll(PDO::FETCH_ASSOC);
 
-$stmt = $conn->prepare($query);
-$stmt->bindParam(':parcel_id', $parcel_id, PDO::PARAM_INT);
-$stmt->execute();
+}
 
-
-$parcel = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$parcel) {
+if (!$form_id) {
     die("Parcel not found!");
 }
 ?>
@@ -149,24 +147,14 @@ function leaseAmount() {
 <body style="background-color: #2C3E50">
     <div class="container">
         <!-- Parcel Details -->
-        <?php
-            if ($parcel['landtype'] === 'leasehold') {
-                echo '<script>leaseAmount();</script>';
-                //echo '<script>alert("The details are being worked on")</script>';
-            }
-        ?>
         
         <div id= "parcel-details"class="details-card">
             <h1>Parcel Details</h1>
-            <p><strong>Title Deed Number:</strong> <?php echo htmlspecialchars($parcel['titledeedno']); ?></p>
-            <p><strong>Date Created:</strong> <?php echo htmlspecialchars($parcel['datecreated']); ?></p>
-            <p><strong>Owner:</strong> <?php echo htmlspecialchars($parcel['owner_name']); ?></p>
-            <p><strong>Land Type:</strong> <?php echo htmlspecialchars($parcel['landtype']); ?></p>
-            <p><strong>Status:</strong> <?php echo htmlspecialchars($parcel['status']); ?></p>
-            <?php if ($parcel['landtype'] === 'leasehold') : ?>
-                <p><strong>Lease Duration:</strong> <?php echo htmlspecialchars($parcel['duration']); ?> months</p>
-                <p><strong>Ending Date:</strong> <script>document.write(start+durationMonths);</script></p>
-            <?php endif; ?>
+            <p><strong>Date Submitted:</strong> <?php echo $submittedForm['date_submitted']; ?></p>
+                        <p><strong>Surveyor:</strong> <?php echo $submittedForm['surveyor']; ?></p>
+                        <p><strong>Current Owner:</strong> <?php echo $submittedForm['current_owner_name']; ?></p>
+                        <p><strong>Proposed Owner:</strong> <?php echo $submittedForm['proposed_owner_name']; ?></p>
+                        <p><strong>Status:</strong> <?php echo $submittedForm['status']; ?></p>
             
         </div>
 
