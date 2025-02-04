@@ -1,4 +1,11 @@
 <?php
+
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: dashboard.php");
+    exit();
+}
 // Database connection
 $host = "localhost";
 $port = "5432";
@@ -50,60 +57,7 @@ if ($form_type == "ownership") {
 if (!$form_id) {
     die("Parcel not found!");
 }
-function acceptMutationChange(){
-    //Fetch the current owner ID
-    $query_ownerId = "Select id from users where nat_id = :current_owner_natid";
-    $stmt_ownerId = $conn->prepare($query_ownerId);
-    $stmt_ownerId->bindParam(':current_owner_natid', $submittedForm['current_owner_natid']);
-    $stmt_ownerId->execute();
-    $current_owner_id = $stmt_ownerId->fetch(PDO::FETCH_ASSOC);
 
-    //Update the current ownership status to inactive
-    $query_updateCurrentOwnership = "UPDATE ownership SET status_id = 2, date_end = NOW() 
-                                    From users s 
-                                    WHERE o.titledeed_no = :titledeed_no
-                                    AND o.owner_id = :owner_id";
-    $stmt_updateCurrentOwnership = $conn->prepare($query_updateCurrentOwnership);
-    $stmt_updateCurrentOwnership->bindParam(':titledeed_no', $submittedForm['titledeed_no']);
-    $stmt_updateCurrentOwnership->bindParam(':owner_id', $current_owner_id['id']);
-    $stmt_updateCurrentOwnership->execute();
-
-    //Fetch the proposed owner ID
-    $query_proposedOwnerId = "Select id from users where nat_id = :proposed_owner_natid";
-    $stmt_proposedOwnerId = $conn->prepare($query_proposedOwnerId);
-    $stmt_proposedOwnerId->bindParam(':proposed_owner_natid', $submittedForm['proposed_owner_natid']);
-    $stmt_proposedOwnerId->execute();
-    $proposed_owner_id = $stmt_proposedOwnerId->fetch(PDO::FETCH_ASSOC);
-
-    //Insert the proposed ownership as a new ownership. Set status to active (1)
-    $query_insertProposedOwnership = "INSERT INTO ownership (titledeed_no, owner_id, status_id, date_started) 
-                                    VALUES (:titledeed_no, :owner_id, 1, NOW())";
-    $stmt_insertProposedOwnership = $conn->prepare($query_insertProposedOwnership);
-    $stmt_insertProposedOwnership->bindParam(':titledeed_no', $submittedForm['titledeed_no']);
-    $stmt_insertProposedOwnership->bindParam(':owner_id', $proposed_owner_id['id']);
-    $stmt_insertProposedOwnership->execute();
-
-    //Update the status of the mutation form to approved
-    $query_updateFormStatus = "UPDATE ownership_form SET status_id = 2 WHERE id = :form_id";
-    $stmt_updateFormStatus = $conn->prepare($query_updateFormStatus);
-    $stmt_updateFormStatus->bindParam(':form_id', $submittedForm['id']);
-    $stmt_updateFormStatus->execute();
-
-    //Redirect to the form view page
-    header("Location: mutationFormView.php?form_id=".$submittedForm['id']."&form_type=ownership");
-
-
-}
-function rejectMutationChange(){
-    //Update the status of the mutation form to rejected
-    $query_updateFormStatus = "UPDATE ownership_form SET status_id = 6 WHERE id = :form_id";
-    $stmt_updateFormStatus = $conn->prepare($query_updateFormStatus);
-    $stmt_updateFormStatus->bindParam(':form_id', $submittedForm['id']);
-    $stmt_updateFormStatus->execute();
-
-    //Redirect to the form view page
-    header("Location: mutationFormView.php?form_id=".$submittedForm['id']."&form_type=ownership");
-}
 ?>
 
 <!DOCTYPE html>
@@ -143,10 +97,11 @@ function rejectMutationChange(){
                             <p><strong>Proposed Owner:</strong> <?php echo htmlspecialchars($submittedForm['proposed_owner_name']); ?></p>
                             <p><strong>Proposed Owner ID:</strong> <?php echo htmlspecialchars($submittedForm['proposed_owner_natid']); ?></p>
                         </div>
+                        
                     </div>
                     <div>
-                        <button>Approve</button>
-                        <button>Reject</button>
+                        <button onclick="acceptMutation()">Approve</button>
+                        <button onclick = "rejectMutation()">Reject</button>
                     </div>
                 </div>
                 <!-- Map -->
@@ -163,6 +118,40 @@ function rejectMutationChange(){
                 const geoJsonLayer = L.geoJSON(parcelCoordinates).addTo(map);
                 map.fitBounds(geoJsonLayer.getBounds());
             </script>
+            <script>
+    function acceptMutation() {
+        if (confirm("Are you sure you want to approve this mutation?")) {
+            fetch('approveMutation.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({
+                    form_id: "<?php echo $submittedForm['id']; ?>",
+                    current_owner_natid: "<?php echo $submittedForm['current_owner_natid']; ?>",
+                    proposed_owner_natid: "<?php echo $submittedForm['proposed_owner_natid']; ?>",
+                    titledeed_no: "<?php echo $submittedForm['titledeed_no']; ?>"
+                    
+                })
+            })
+            .then(response => response.text())
+            .then(data => alert(data)) // Show response from PHP
+            .catch(error => console.error('Error:', error));
+        }
+    }
+
+    function rejectMutation() {
+        if (confirm("Are you sure you want to reject this mutation?")) {
+            fetch('rejectMutation.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ form_id: "<?php echo $submittedForm['id']; ?>" })
+            })
+            .then(response => response.text())
+            .then(data => alert(data)) // Show response from PHP
+            .catch(error => console.error('Error:', error));
+        }
+    }
+</script>
+
         <?php else: ?>
             <p>No data found for the specified form.</p>
         <?php endif; ?>
