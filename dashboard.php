@@ -48,11 +48,12 @@ try {
                 JOIN status s ON o.status_id = s.id
                 JOIN landtype l ON p.landtypeid = l.id
                 WHERE
-                o.owner_id = :owner_id";
+                o.owner_id = :owner_id AND o.status_id = :status_id";
     $stmt2 = $conn->prepare($query);
 
     // Bind the parameter
     $stmt2->bindValue(':owner_id', $id, PDO::PARAM_INT);
+    $stmt2->bindValue(':status_id', 1, PDO::PARAM_INT);
 
     // Execute the query
     $stmt2->execute();

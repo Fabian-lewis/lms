@@ -2,33 +2,34 @@
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: mutationFormView.php");
+    echo json_encode(["status" => "error", "message" => "Unauthorized access"]);
     exit();
 }
 
-// Database connection
-$host = "localhost";
-$port = "5432";
-$dbname = "klms";
-$username = "postgres";
-$password = "gredev";
-
-try {
-    $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    echo json_encode(["status" => "error", "message" => "Database connection failed"]);
-    exit();
-}
-
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+// Check if all required POST parameters are set
+if (isset($_POST['form_id'], $_POST['current_owner_natid'], $_POST['proposed_owner_natid'], $_POST['titledeed_no'])) {
+    $form_id = filter_input(INPUT_POST, 'form_id', FILTER_SANITIZE_NUMBER_INT);
     $current_owner_natid = filter_input(INPUT_POST, 'current_owner_natid', FILTER_SANITIZE_NUMBER_INT);
     $proposed_owner_natid = filter_input(INPUT_POST, 'proposed_owner_natid', FILTER_SANITIZE_NUMBER_INT);
     $titledeed_no = filter_input(INPUT_POST, 'titledeed_no', FILTER_SANITIZE_STRING);
-    $form_id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
-    if (!$current_owner_natid || !$proposed_owner_natid || !$titledeed_no || !$form_id) {
+    if (!$form_id || !$current_owner_natid || !$proposed_owner_natid || !$titledeed_no) {
         echo json_encode(["status" => "error", "message" => "Missing required form fields"]);
+        exit();
+    }
+
+    // Database connection
+    $host = "localhost";
+    $port = "5432";
+    $dbname = "klms";
+    $username = "postgres";
+    $password = "gredev";
+
+    try {
+        $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", $username, $password);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    } catch (PDOException $e) {
+        echo json_encode(["status" => "error", "message" => "Database connection failed"]);
         exit();
     }
 
@@ -46,11 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         // Deactivate current ownership
-        $stmt = $conn->prepare("
-            UPDATE ownership 
-            SET status_id = 2, date_end = NOW() 
-            WHERE titledeed_no = :titledeed_no AND owner_id = :owner_id
-        ");
+        $stmt = $conn->prepare("UPDATE ownership SET status_id = 2, date_end = NOW() WHERE titledeed_no = :titledeed_no AND owner_id = :owner_id");
         $stmt->execute([':titledeed_no' => $titledeed_no, ':owner_id' => $current_owner_id]);
 
         // Fetch proposed owner ID
@@ -63,10 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         // Insert new ownership
-        $stmt = $conn->prepare("
-            INSERT INTO ownership (titledeed_no, owner_id, status_id, date_started) 
-            VALUES (:titledeed_no, :owner_id, 1, NOW())
-        ");
+        $stmt = $conn->prepare("INSERT INTO ownership (titledeed_no, owner_id, status_id, date_started) VALUES (:titledeed_no, :owner_id, 1, NOW())");
         $stmt->execute([':titledeed_no' => $titledeed_no, ':owner_id' => $proposed_owner_id]);
 
         // Update form status to approved
@@ -76,10 +70,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         // Commit transaction
         $conn->commit();
 
-        echo json_encode(["status" => "success", "message" => "Mutation approved"]);
+        // Success response
+        echo json_encode(["status" => "success", "message" => "Mutation approved successfully"]);
+        header("Location: dashboard.php?user_id=" . $_SESSION['user_id']);
     } catch (Exception $e) {
+        // Rollback transaction in case of errors
         $conn->rollBack();
         echo json_encode(["status" => "error", "message" => $e->getMessage()]);
     }
+} else {
+    echo json_encode(["status" => "error", "message" => "Missing required form fields"]);
 }
 ?>
