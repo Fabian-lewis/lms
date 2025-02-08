@@ -102,7 +102,7 @@ try {
     $stmt4->execute();
     $divisionForms = $stmt4->fetchAll(PDO::FETCH_ASSOC);
 
-    // Division Mutatition Forms for Ministry officials
+    // Submitted Division Mutatition Forms for Ministry officials
     $query3 = "SELECT
                 d.id,
                 d.titledeed,
@@ -124,7 +124,7 @@ try {
     $stmt5->execute();
     $submittedDivisionForms = $stmt5->fetchAll(PDO::FETCH_ASSOC);
 
-    // Ownership Mutatition Forms for Ministry officials
+    // Submitted Ownership Mutatition Forms for Ministry officials
     $query4 = "SELECT
                 o.id,
                 o.titledeed_no,
