@@ -22,7 +22,7 @@ try {
 $form_id = $_GET['form_id'];
 $form_type = $_GET['form_type'];
 
-if ($form_type == "ownership") {
+if ($form_type === "ownership") {
     $query1 = "SELECT
                 o.id,
                 o.titledeed_no,
@@ -45,6 +45,30 @@ if ($form_type == "ownership") {
                 JOIN users prop_owner ON o.proposed_owner_natid = prop_owner.nat_id
                 WHERE
                 o.id = :form_id";
+    $stmt6 = $conn->prepare($query1);
+    $stmt6->bindValue(':form_id', $form_id, PDO::PARAM_INT);
+    $stmt6->execute();
+    $submittedForm = $stmt6->fetch(PDO::FETCH_ASSOC);
+
+    // Decode the coordinates field
+    //$submittedForm['coordinates'] = json_decode($submittedForm['coordinates']);
+}elseif ($form_type === "division") {
+    $query1 = "SELECT
+                s.id,
+                s.titledeed_no,
+                s.division_coordinates,
+                s.date_submitted,
+                CONCAT(surveyor.fname, ' ', surveyor.sname) AS surveyor,
+                s.surveyor_id,
+                s.status_id,
+                st.status
+                FROM
+                division_form s
+                JOIN status st ON s.status_id = st.id
+                
+                JOIN users surveyor ON s.surveyor_id = surveyor.id
+                WHERE
+                s.id = :form_id";
     $stmt6 = $conn->prepare($query1);
     $stmt6->bindValue(':form_id', $form_id, PDO::PARAM_INT);
     $stmt6->execute();

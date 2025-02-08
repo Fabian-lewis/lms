@@ -146,7 +146,7 @@ try {
                 WHERE
                 o.status_id = :status_id";
     $stmt6 = $conn->prepare($query4);
-    $stmt6->bindValue(':status_id', 3, PDO::PARAM_INT);
+    $stmt6->bindValue(':status_id', 2, PDO::PARAM_INT);
     $stmt6->execute();
     $submittedOwnershipForms = $stmt6->fetchAll(PDO::FETCH_ASSOC);
 

@@ -64,7 +64,7 @@ if (isset($_POST['form_id'], $_POST['current_owner_natid'], $_POST['proposed_own
         $stmt->execute([':titledeed_no' => $titledeed_no, ':owner_id' => $proposed_owner_id]);
 
         // Update form status to approved
-        $stmt = $conn->prepare("UPDATE ownership_form SET status_id = 2 WHERE id = :form_id");
+        $stmt = $conn->prepare("UPDATE ownership_form SET status_id = 5 WHERE id = :form_id");
         $stmt->execute([':form_id' => $form_id]);
 
         // Commit transaction
