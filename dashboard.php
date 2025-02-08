@@ -146,7 +146,7 @@ try {
                 WHERE
                 o.status_id = :status_id";
     $stmt6 = $conn->prepare($query4);
-    $stmt6->bindValue(':status_id', 2, PDO::PARAM_INT);
+    $stmt6->bindValue(':status_id', 3, PDO::PARAM_INT);
     $stmt6->execute();
     $submittedOwnershipForms = $stmt6->fetchAll(PDO::FETCH_ASSOC);
 
@@ -267,7 +267,7 @@ try {
                         <p><strong>Title Deed:</strong> <?php echo $form['titledeed']; ?></p>
                         <p><strong>Number of Divisions:</strong> <?php echo $form['number_of_divs']; ?></p>
                         <p><strong>Status:</strong> <?php echo $form['status']; ?></p>
-                        <a href="mutationFormView.php?form_id=<?php echo $form['id'];?> form_type=<?php echo 'division'?>" class="btn btn-primary">View Details</a>
+                        <a href="mutationFormView.php?form_id=<?php echo $form['id'];?>&form_type=<?php echo 'division'?>" class="btn btn-primary">View Details</a>
 
                     </div>
                 <?php endforeach; ?>

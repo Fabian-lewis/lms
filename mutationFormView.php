@@ -6,6 +6,7 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: dashboard.php");
     exit();
 }
+
 // Database connection
 $host = "localhost";
 $port = "5432";
@@ -18,9 +19,13 @@ try {
     die("Connection failed: " . $e->getMessage());
 }
 
-// Get FormID ID from URL
-$form_id = $_GET['form_id'];
-$form_type = $_GET['form_type'];
+// Get FormID and FormType from URL
+$form_id = $_GET['form_id'] ?? null;
+$form_type = $_GET['form_type'] ?? null;
+
+if (!$form_id || !$form_type) {
+    die("Form ID or Form Type not provided!");
+}
 
 if ($form_type === "ownership") {
     $query1 = "SELECT
@@ -50,36 +55,33 @@ if ($form_type === "ownership") {
     $stmt6->execute();
     $submittedForm = $stmt6->fetch(PDO::FETCH_ASSOC);
 
-    // Decode the coordinates field
-    //$submittedForm['coordinates'] = json_decode($submittedForm['coordinates']);
-}elseif ($form_type === "division") {
+} elseif ($form_type === "division") {
     $query1 = "SELECT
-                s.id,
-                s.titledeed_no,
-                s.division_coordinates,
-                s.date_submitted,
+                d.id,
+                d.titledeed,
+                d.divisions_coordinates,
+                d.number_of_divs,
+                p.coordinates,
+                d.date_submitted,
                 CONCAT(surveyor.fname, ' ', surveyor.sname) AS surveyor,
-                s.surveyor_id,
-                s.status_id,
-                st.status
+                d.surveyor_id,
+                d.status_id,
+                s.status
                 FROM
-                division_form s
-                JOIN status st ON s.status_id = st.id
-                
-                JOIN users surveyor ON s.surveyor_id = surveyor.id
+                division_form d
+                JOIN status s ON d.status_id = s.id
+                JOIN parcel p ON d.titledeed = p.titledeedno
+                JOIN users surveyor ON d.surveyor_id = surveyor.id
                 WHERE
-                s.id = :form_id";
+                d.id = :form_id";
     $stmt6 = $conn->prepare($query1);
     $stmt6->bindValue(':form_id', $form_id, PDO::PARAM_INT);
     $stmt6->execute();
     $submittedForm = $stmt6->fetch(PDO::FETCH_ASSOC);
-
-    // Decode the coordinates field
-    //$submittedForm['coordinates'] = json_decode($submittedForm['coordinates']);
 }
 
-if (!$form_id) {
-    die("Parcel not found!");
+if (empty($submittedForm)) {
+    die("Form not found!");
 }
 
 ?>
@@ -121,11 +123,10 @@ if (!$form_id) {
                             <p><strong>Proposed Owner:</strong> <?php echo htmlspecialchars($submittedForm['proposed_owner_name']); ?></p>
                             <p><strong>Proposed Owner ID:</strong> <?php echo htmlspecialchars($submittedForm['proposed_owner_natid']); ?></p>
                         </div>
-                        
                     </div>
                     <div>
                         <button onclick="acceptMutation()">Approve</button>
-                        <button onclick = "rejectMutation()">Reject</button>
+                        <button onclick="rejectMutation()">Reject</button>
                     </div>
                 </div>
                 <!-- Map -->
@@ -143,43 +144,89 @@ if (!$form_id) {
                 map.fitBounds(geoJsonLayer.getBounds());
             </script>
             <script>
-    function acceptMutation() {
-        if (confirm("Are you sure you want to approve this mutation?")) {
-            fetch('approveMutation.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({
-                    form_id: "<?php echo $submittedForm['id']; ?>",
-                    current_owner_natid: "<?php echo $submittedForm['current_owner_natid']; ?>",
-                    proposed_owner_natid: "<?php echo $submittedForm['proposed_owner_natid']; ?>",
-                    titledeed_no: "<?php echo $submittedForm['titledeed_no']; ?>"
-                    
-                })
-            })
-            .then(response => response.text())
-            .then(data => alert(data)) // Show response from PHP
-            .catch(error => console.error('Error:', error));
-        }
-    }
+                function acceptMutation() {
+                    if (confirm("Are you sure you want to approve this mutation?")) {
+                        fetch('approveMutation.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: new URLSearchParams({
+                                form_id: "<?php echo $submittedForm['id']; ?>",
+                                current_owner_natid: "<?php echo $submittedForm['current_owner_natid']; ?>",
+                                proposed_owner_natid: "<?php echo $submittedForm['proposed_owner_natid']; ?>",
+                                titledeed_no: "<?php echo $submittedForm['titledeed_no']; ?>"
+                            })
+                        })
+                        .then(response => response.text())
+                        .then(data => alert(data)) // Show response from PHP
+                        .catch(error => console.error('Error:', error));
+                    }
+                }
 
-    function rejectMutation() {
-        if (confirm("Are you sure you want to reject this mutation?")) {
-            fetch('rejectMutation.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({ form_id: "<?php echo $submittedForm['id']; ?>" })
-            })
-            .then(response => response.text())
-            .then(data => alert(data)) // Show response from PHP
-            .catch(error => console.error('Error:', error));
-        }
-    }
-</script>
+                function rejectMutation() {
+                    if (confirm("Are you sure you want to reject this mutation?")) {
+                        fetch('rejectMutation.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: new URLSearchParams({ form_id: "<?php echo $submittedForm['id']; ?>" })
+                        })
+                        .then(response => response.text())
+                        .then(data => alert(data)) // Show response from PHP
+                        .catch(error => console.error('Error:', error));
+                    }
+                }
+            </script>
 
-        <?php else: ?>
-            <p>No data found for the specified form.</p>
-        <?php endif; ?>
+        <?php elseif ($form_type == "division" && !empty($submittedForm)): ?>
+    <div class="header">
+        <h1>DIVISION MUTATION FORM</h1>
+    </div>
+    <div class="body">
+        <div class="container">
+            <!-- Parcel Details -->
+            <div id="parcel-details" class="details-card">
+                <div class="deep-details">
+                    <p><strong>Form ID:</strong> <?php echo htmlspecialchars($submittedForm['id']); ?></p>
+                    <p><strong>Date Submitted:</strong> <?php echo htmlspecialchars($submittedForm['date_submitted']); ?></p>
+                    <p><strong>Surveyor:</strong> <?php echo htmlspecialchars($submittedForm['surveyor']); ?></p>
+                    <p><strong>Title Deed No:</strong> <?php echo htmlspecialchars($submittedForm['titledeed']); ?></p>
+                    <p><strong>Title Deed No:</strong> <?php echo htmlspecialchars($submittedForm['coordinates']); ?></p>
+                    <p><strong>Number of Divisions:</strong> <?php echo htmlspecialchars($submittedForm['number_of_divs']); ?></p>
+                    <p><strong>Status:</strong> <?php echo htmlspecialchars($submittedForm['status']); ?></p>
+                </div>
+
+                <!-- Extract and Display Division Coordinates -->
+                <div class="deep-details">
+                    <h2>Division Coordinates</h2>
+                    <?php
+                    $divisions = json_decode($submittedForm['divisions_coordinates'], true);
+
+                    if (!empty($divisions)) {
+                        foreach ($divisions as $index => $division) {
+                            $coordinates = $division["geometry"]["coordinates"][0]; // Extract coordinates
+                            echo "<h3>Coordinates for Division " . ($index + 1) . ":</h3>";
+                            echo "<ul>";
+                            foreach ($coordinates as $coord) {
+                                echo "<li>Lat: " . htmlspecialchars($coord[1]) . ", Lng: " . htmlspecialchars($coord[0]) . "</li>";
+                            }
+                            echo "</ul>";
+                        }
+                    } else {
+                        echo "<p>No division coordinates available.</p>";
+                    }
+                    ?>
+                </div>
+            </div>
+
+            <div>
+                <button onclick="acceptMutation()">Approve</button>
+                <button onclick="rejectMutation()">Reject</button>
+            </div>
+        </div>
+        <!-- Map -->
+        <div id="map"></div>
+    </div>
+<?php endif; ?>
+
     </main>
 </body>
 </html>
-
