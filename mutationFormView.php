@@ -218,7 +218,8 @@ if (empty($submittedForm)) {
             </div>
 
             <div>
-                <button onclick="acceptMutation()">Approve</button>
+                <a href="approveDivForm.php?form_id=<?php echo $submittedForm['id'];?>"><button onclick="acceptMutation()">Approve</button></a>
+               
                 <button onclick="rejectMutation()">Reject</button>
             </div>
         </div>

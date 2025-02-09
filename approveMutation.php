@@ -6,6 +6,10 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+// Get FormID and FormType from URL
+$form_id = $_GET['form_id'] ?? null;
+$form_type = $_GET['form_type'] ?? null;
+
 // Check if all required POST parameters are set
 if (isset($_POST['form_id'], $_POST['current_owner_natid'], $_POST['proposed_owner_natid'], $_POST['titledeed_no'])) {
     $form_id = filter_input(INPUT_POST, 'form_id', FILTER_SANITIZE_NUMBER_INT);
