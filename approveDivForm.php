@@ -66,6 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "<script>alert('New title deeds created successfully!');</script>";
     }
 }
+
+
 ?>
 
 <!DOCTYPE html>
@@ -136,9 +138,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
+                                    <br>
                                     <form method="POST" action="">
                                         <button type="submit" class="btn btn-success">Create New Title Deeds</button>
                                     </form>
+                                    <br><br>
                                     <a href="approveDivForm.php?form_id=<?php echo $submittedForm['id']; ?>" class="btn btn-primary">Approve</a>
                                     <a href="rejectDivForm.php?form_id=<?php echo $submittedForm['id']; ?>" class="btn btn-danger">Reject</a>
                                 </div>
@@ -151,26 +155,82 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </main>
     <footer></footer>
     <script>
-        var map = L.map('map').setView([0.0236, 37.9062], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-        }).addTo(map);
+    // Function to check if a title deed exists
+    async function checkTitleDeedExists(titleDeed) {
+        try {
+            const response = await fetch(`fetchTitles.php?title_deed=${encodeURIComponent(titleDeed)}`);
+            const data = await response.json();
+            return data.exists;
+        } catch (error) {
+            console.error('Error checking title deed:', error);
+            return false;
+        }
+    }
 
-        var parcelCoordinates = <?php echo $submittedForm['coordinates']; ?>;
-        var parcel = L.geoJSON(parcelCoordinates, {color: 'blue'}).addTo(map);
-        map.fitBounds(parcel.getBounds());
+    // Event listener for form submission
+    document.querySelector('form').addEventListener('submit', async function (event) {
+        event.preventDefault(); // Prevent form submission
 
-        
-        var map2 = L.map('map2').setView([0.0236, 37.9062], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-        }).addTo(map2);
+        const titleDeedInputs = document.querySelectorAll('input[name="new_title_deeds[]"]');
+        let allValid = true;
 
-        var divisions = <?php echo $submittedForm['divisions_coordinates']; ?>;
-        divisions.forEach(division => {
-            var div = L.geoJSON(division, {color: 'red'}).addTo(map2);
-            map2.fitBounds(div.getBounds());
+        for (const input of titleDeedInputs) {
+            const titleDeed = input.value.trim();
+
+            if (titleDeed) {
+                const exists = await checkTitleDeedExists(titleDeed);
+
+                if (exists) {
+                    alert(`Title deed "${titleDeed}" already exists!`);
+                    input.focus();
+                    allValid = false;
+                    break;
+                }
+            }
+        }
+
+        if (allValid) {
+            event.target.submit(); // Submit the form if all title deeds are valid
+        }
+    });
+
+    // Optional: Add real-time validation as the user types
+    document.querySelectorAll('input[name="new_title_deeds[]"]').forEach(input => {
+        input.addEventListener('blur', async function () {
+            const titleDeed = input.value.trim();
+
+            if (titleDeed) {
+                const exists = await checkTitleDeedExists(titleDeed);
+
+                if (exists) {
+                    alert(`Title deed "${titleDeed}" already exists!`);
+                    
+                    //nput.focus();
+                }
+            }
         });
-    </script>
+    });
+
+    // Map initialization (existing code)
+    var map = L.map('map').setView([0.0236, 37.9062], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+    }).addTo(map);
+
+    var parcelCoordinates = <?php echo $submittedForm['coordinates']; ?>;
+    var parcel = L.geoJSON(parcelCoordinates, {color: 'blue'}).addTo(map);
+    map.fitBounds(parcel.getBounds());
+
+    var map2 = L.map('map2').setView([0.0236, 37.9062], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+    }).addTo(map2);
+
+    var divisions = <?php echo $submittedForm['divisions_coordinates']; ?>;
+    divisions.forEach(division => {
+        var div = L.geoJSON(division, {color: 'red'}).addTo(map2);
+        map2.fitBounds(div.getBounds());
+    });
+</script>
 </body>
 </html>
