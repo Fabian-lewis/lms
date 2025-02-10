@@ -224,6 +224,7 @@ if (empty($submittedForm)) {
             </div>
         </div>
         <!-- Map -->
+         <!--
         <div id="map"></div>
         <script>
                 const map = L.map('map').setView([0, 0], 13); // Note: Latitude comes before longitude
@@ -264,6 +265,7 @@ const parcelLayer = L.geoJSON(parcelCoordinates, { style: styleParcel }).addTo(m
                 map.fitBounds(geoJsonLayer.allBounds());
             </script>
     </div>
+                -->
 <?php endif; ?>
 
     </main>

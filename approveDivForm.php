@@ -22,6 +22,7 @@ $form_id = $_GET['form_id'] ?? null;
 if (!$form_id) {
     die("Form ID not provided!");
 }
+
 $query1 = "SELECT
                 d.id,
                 d.titledeed,
@@ -40,13 +41,30 @@ $query1 = "SELECT
                 JOIN users surveyor ON d.surveyor_id = surveyor.id
                 WHERE
                 d.id = :form_id";
-    $stmt6 = $conn->prepare($query1);
-    $stmt6->bindValue(':form_id', $form_id, PDO::PARAM_INT);
-    $stmt6->execute();
-    $submittedForm = $stmt6->fetch(PDO::FETCH_ASSOC);
+$stmt6 = $conn->prepare($query1);
+$stmt6->bindValue(':form_id', $form_id, PDO::PARAM_INT);
+$stmt6->execute();
+$submittedForm = $stmt6->fetch(PDO::FETCH_ASSOC);
 
 if (empty($submittedForm)) {
     die("Form not found!");
+}
+
+// Handle form submission for new title IDs
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $newTitleDeeds = $_POST['new_title_deeds'] ?? [];
+
+    if (!empty($newTitleDeeds)) {
+        foreach ($newTitleDeeds as $index => $titleDeed) {
+            // Insert new title deeds into the database
+            $insertQuery = "INSERT INTO parcel (titledeedno, coordinates) VALUES (:titledeed, :coordinates)";
+            $stmt = $conn->prepare($insertQuery);
+            $stmt->bindValue(':titledeed', $titleDeed, PDO::PARAM_STR);
+            $stmt->bindValue(':coordinates', json_encode($divisions[$index]), PDO::PARAM_STR);
+            $stmt->execute();
+        }
+        echo "<script>alert('New title deeds created successfully!');</script>";
+    }
 }
 ?>
 
@@ -87,13 +105,13 @@ if (empty($submittedForm)) {
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <h5 class="card-title
-                                    ">Divisions</h5>
+                                    <h5 class="card-title">Divisions</h5>
                                     <table class="table table-bordered">
                                         <thead>
                                             <tr>
                                                 <th>#</th>
                                                 <th>Coordinates</th>
+                                                <th>New Title Deed</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -104,6 +122,7 @@ if (empty($submittedForm)) {
                                                 echo "<tr>";
                                                 echo "<td>{$i}</td>";
                                                 echo "<td>".json_encode($division) ."</td>";
+                                                echo "<td><input type='text' name='new_title_deeds[]' class='form-control' placeholder='Enter new title deed'></td>";
                                                 echo "</tr>";
                                                 $i++;
                                             }
@@ -117,6 +136,9 @@ if (empty($submittedForm)) {
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
+                                    <form method="POST" action="">
+                                        <button type="submit" class="btn btn-success">Create New Title Deeds</button>
+                                    </form>
                                     <a href="approveDivForm.php?form_id=<?php echo $submittedForm['id']; ?>" class="btn btn-primary">Approve</a>
                                     <a href="rejectDivForm.php?form_id=<?php echo $submittedForm['id']; ?>" class="btn btn-danger">Reject</a>
                                 </div>
@@ -149,8 +171,6 @@ if (empty($submittedForm)) {
             var div = L.geoJSON(division, {color: 'red'}).addTo(map2);
             map2.fitBounds(div.getBounds());
         });
-
-
     </script>
 </body>
 </html>
