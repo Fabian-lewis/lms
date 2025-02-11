@@ -31,11 +31,21 @@ $query1 = "SELECT
                 p.coordinates,
                 d.date_submitted,
                 CONCAT(surveyor.fname, ' ', surveyor.sname) AS surveyor,
+
+                o.id,
+                o.date_started,
+                o.date_end,
+                o.status_id,
+                o.owner_id,
+
+                CONCAT(owner.fname, ' ', owner.sname) AS owner,
                 d.surveyor_id,
                 d.status_id,
                 s.status
                 FROM
                 division_form d
+                JOIN ownership o ON d.titledeed = o.titledeed_no
+                JOIN users owner ON o.owner_id = owner.id
                 JOIN status s ON d.status_id = s.id
                 JOIN parcel p ON d.titledeed = p.titledeedno
                 JOIN users surveyor ON d.surveyor_id = surveyor.id
@@ -84,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body style="background-color: #2C3E50">
     <header></header>
     <main>
-        <div class="container">
+        <div class="container" style="background-color: #BDC3C7; color:black;">
             <div class="row">
                 <div class="col-md-12">
                     <h1 class="text-center text-white">Parcel Details</h1>
@@ -93,13 +103,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
-                        <div class="card-body">
+                        <div class="card-body" style="background-color: #8B5E3C; color: white; border-radius: 10px; margin: none;">
                             <div class="row">
                                 <div class="col-md-6">
                                     <h5 class="card-title">Title Deed: <?php echo $submittedForm['titledeed']; ?></h5>
                                     <p class="card-text">Surveyor: <?php echo $submittedForm['surveyor']; ?></p>
                                     <p class="card-text">Date Submitted: <?php echo $submittedForm['date_submitted']; ?></p>
                                     <p class="card-text">Status: <?php echo $submittedForm['status']; ?></p>
+
+                                    <h5 class="card-title
+                                    ">Current Owner</h5>
+                                    <p class="card-text">Name: <?php echo $submittedForm['owner']; ?></p>
+                                    <p class="card-text">Date Started: <?php echo $submittedForm['date_started']; ?></p>
+                                    <p class="card-text">Date Ended: <?php echo $submittedForm['date_end']; ?></p>
+                                    <p class="card-text">Status: <?php echo $submittedForm['status']; ?></p>
+                                    
+
                                 </div>
                                 <div class="col-md-6">
                                     <div id="map" style="height: 400px;"></div>
@@ -190,7 +209,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (allValid) {
+            
             event.target.submit(); // Submit the form if all title deeds are valid
+
         }
     });
 
@@ -205,7 +226,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (exists) {
                     alert(`Title deed "${titleDeed}" already exists!`);
                     
-                    //nput.focus();
+                    //input.focus();
                 }
             }
         });
