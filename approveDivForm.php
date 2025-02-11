@@ -29,6 +29,7 @@ $query1 = "SELECT
                 d.divisions_coordinates,
                 d.number_of_divs,
                 p.coordinates,
+                p.landtypeid,
                 d.date_submitted,
                 CONCAT(surveyor.fname, ' ', surveyor.sname) AS surveyor,
 
@@ -37,6 +38,9 @@ $query1 = "SELECT
                 o.date_end,
                 o.status_id,
                 o.owner_id,
+
+                l.landtype,
+
 
                 CONCAT(owner.fname, ' ', owner.sname) AS owner,
                 d.surveyor_id,
@@ -48,6 +52,7 @@ $query1 = "SELECT
                 JOIN users owner ON o.owner_id = owner.id
                 JOIN status s ON d.status_id = s.id
                 JOIN parcel p ON d.titledeed = p.titledeedno
+                JOIN landtype l ON p.landtypeid = l.id
                 JOIN users surveyor ON d.surveyor_id = surveyor.id
                 WHERE
                 d.id = :form_id";
@@ -67,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($newTitleDeeds)) {
         foreach ($newTitleDeeds as $index => $titleDeed) {
             // Insert new title deeds into the database
-            $insertQuery = "INSERT INTO parcel (titledeedno, coordinates) VALUES (:titledeed, :coordinates)";
+            $insertQuery = "INSERT INTO parcel (titledeedno, coordinates, landtypeid,statusid,datecreated) VALUES (:titledeed, :coordinates, :landtypeid, 1, NOW())";
             $stmt = $conn->prepare($insertQuery);
             $stmt->bindValue(':titledeed', $titleDeed, PDO::PARAM_STR);
             $stmt->bindValue(':coordinates', json_encode($divisions[$index]), PDO::PARAM_STR);
@@ -106,18 +111,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="card-body" style="background-color: #8B5E3C; color: white; border-radius: 10px; margin: none;">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <h5 class="card-title">Title Deed: <?php echo $submittedForm['titledeed']; ?></h5>
+                                    <h5 class="card-title">PARCEL DETAILS</h5>
+                                    <P class="card-title">Title Deed: <?php echo $submittedForm['titledeed']; ?></P>
+                                    <p class="card-text">Land Type: <?php echo $submittedForm['landtype']; ?></p>
+                                    <h5 class="card-title">DIVISION MUTATION FORM DETAILS</h5>
                                     <p class="card-text">Surveyor: <?php echo $submittedForm['surveyor']; ?></p>
                                     <p class="card-text">Date Submitted: <?php echo $submittedForm['date_submitted']; ?></p>
                                     <p class="card-text">Status: <?php echo $submittedForm['status']; ?></p>
 
+
                                     <h5 class="card-title
                                     ">Current Owner</h5>
                                     <p class="card-text">Name: <?php echo $submittedForm['owner']; ?></p>
+                                    <h5 class="card-title">OWNERSHIP DETAILS</h5>
                                     <p class="card-text">Date Started: <?php echo $submittedForm['date_started']; ?></p>
                                     <p class="card-text">Date Ended: <?php echo $submittedForm['date_end']; ?></p>
-                                    <p class="card-text">Status: <?php echo $submittedForm['status']; ?></p>
-                                    
+
 
                                 </div>
                                 <div class="col-md-6">
@@ -151,8 +160,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         </tbody>
                                     </table>
                                 </div>
+                               
+                            </div>
+                            <div class="row" id = "newParcels">
                                 <div class="col-md-6">
-                                    <div id="map2" style="height: 400px;"></div>
+                                <h5 class="card-title
+                                    ">New Parcels</h5>
+                                    
+                                </div>
+                                <div class="col-md-6">
+                                        <div id="map2" style="height: 400px;"></div>
                                 </div>
                             </div>
                             <div class="row">
@@ -209,8 +226,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (allValid) {
-            
-            event.target.submit(); // Submit the form if all title deeds are valid
+            alert('All title deeds are valid!');
+            document.querySelector('form').submit(); // Submit the form if all title deeds are valid
+
+            //event.target.submit(); // Submit the form if all title deeds are valid
 
         }
     });
