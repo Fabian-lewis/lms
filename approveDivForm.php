@@ -76,9 +76,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $conn->prepare($insertQuery);
             $stmt->bindValue(':titledeed', $titleDeed, PDO::PARAM_STR);
             $stmt->bindValue(':coordinates', json_encode($divisions[$index]), PDO::PARAM_STR);
+            $stmt->bindValue(':landtypeid', $submittedForm['landtypeid'], PDO::PARAM_INT);
             $stmt->execute();
+
+            
+
+            // Insert new ownership
+            $stmt = $conn->prepare("INSERT INTO ownership (titledeed_no, owner_id, status_id, date_started) VALUES (:titledeed_no, :owner_id, 1, NOW())");
+            $stmt->execute([':titledeed_no' => $titleDeed, ':owner_id' => $submittedForm['owner_id']]);
+            $stmt->bindValue(':form_id', $form_id, PDO::PARAM_INT);
+            $stmt->execute();
+
         }
+
+        // Update the status of the division form
+        $updateQuery = "UPDATE division_form SET status_id = 5 WHERE id = :form_id";
+        $stmt = $conn->prepare($updateQuery);
+        $stmt->bindValue(':form_id', $form_id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // De activate the current ownership
+        $stmt = $conn->prepare("UPDATE ownership SET status_id = 2, date_end = NOW() WHERE titledeed_no = :titledeed_no AND owner_id = :owner_id");
+        $stmt->execute([':titledeed_no' => $submittedForm['titledeed'], ':owner_id' => $submittedForm['owner_id']]);
+        $stmt->bindValue(':form_id', $form_id, PDO::PARAM_INT);
+        $stmt->execute();
+
         echo "<script>alert('New title deeds created successfully!');</script>";
+        
     }
 }
 
@@ -179,8 +203,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <button type="submit" class="btn btn-success">Create New Title Deeds</button>
                                     </form>
                                     <br><br>
-                                    <a href="approveDivForm.php?form_id=<?php echo $submittedForm['id']; ?>" class="btn btn-primary">Approve</a>
-                                    <a href="rejectDivForm.php?form_id=<?php echo $submittedForm['id']; ?>" class="btn btn-danger">Reject</a>
                                 </div>
                             </div>
                         </div>
@@ -207,6 +229,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     document.querySelector('form').addEventListener('submit', async function (event) {
         event.preventDefault(); // Prevent form submission
 
+        const formData = new FormData(this); //Get Form Data
+
         const titleDeedInputs = document.querySelectorAll('input[name="new_title_deeds[]"]');
         let allValid = true;
 
@@ -226,12 +250,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (allValid) {
-            alert('All title deeds are valid!');
-            document.querySelector('form').submit(); // Submit the form if all title deeds are valid
+            try {
+            const response = await fetch('process_titledeeds.php', {
+                method: 'POST',
+                body: formData,
+            });
 
-            //event.target.submit(); // Submit the form if all title deeds are valid
+            const result = await response.json();
 
+            if (result.success) {
+                alert('New title deeds created successfully!');
+                window.location.reload(); // Reload page after success
+            } else {
+                alert(`Error: ${result.message}`);
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            alert('An error occurred while processing the request.');
         }
+    }
     });
 
     // Optional: Add real-time validation as the user types
