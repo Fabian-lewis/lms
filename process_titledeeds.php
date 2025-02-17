@@ -41,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($input)) {
         $owner_id = $input['owner_id'] ?? null;
         $landtypeid = $input['landtypeid'] ?? null;
         $divisions = $input['divisions'] ?? [];
+        $currentTitleDeed = $input['currentTitleDeed'] ?? null;
 
         if (empty($newTitleDeeds) || !$form_id || !$owner_id || !$landtypeid) {
             echo json_encode(['success' => false, 'message' => 'Missing required data']);
@@ -71,6 +72,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($input)) {
         // Update division form status
         $stmt = $conn->prepare("UPDATE division_form SET status_id = 5 WHERE id = :form_id");
         $stmt->execute([':form_id' => $form_id]);
+
+        // Update Current Ownership
+        $stmt = $conn->prepare("UPDATE ownership SET status_id = 2 WHERE owner_id = :owner_id && titledeed_no = :currentTitleDeed");
+        $stmt->execute([':owner_id' => $owner_id, ':currentTitleDeed' => $currentTitleDeed]);
+        
 
         $conn->commit(); // Commit transaction
 

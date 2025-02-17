@@ -221,6 +221,7 @@ if (empty($submittedForm)) {
                 owner_id: <?php echo $submittedForm['owner_id']; ?>,
                 landtypeid: <?php echo $submittedForm['landtypeid']; ?>,
                 divisions: <?php echo $submittedForm['divisions_coordinates']; ?>
+                currentTitledeed: <?php echo $submittedForm['titledeed']; ?>
             };
             try {
             const response = await fetch('process_titledeeds.php', {
