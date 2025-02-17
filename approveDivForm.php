@@ -66,45 +66,7 @@ if (empty($submittedForm)) {
 }
 
 // Handle form submission for new title IDs
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $newTitleDeeds = $_POST['new_title_deeds'] ?? [];
 
-    if (!empty($newTitleDeeds)) {
-        foreach ($newTitleDeeds as $index => $titleDeed) {
-            // Insert new title deeds into the database
-            $insertQuery = "INSERT INTO parcel (titledeedno, coordinates, landtypeid,statusid,datecreated) VALUES (:titledeed, :coordinates, :landtypeid, 1, NOW())";
-            $stmt = $conn->prepare($insertQuery);
-            $stmt->bindValue(':titledeed', $titleDeed, PDO::PARAM_STR);
-            $stmt->bindValue(':coordinates', json_encode($divisions[$index]), PDO::PARAM_STR);
-            $stmt->bindValue(':landtypeid', $submittedForm['landtypeid'], PDO::PARAM_INT);
-            $stmt->execute();
-
-            
-
-            // Insert new ownership
-            $stmt = $conn->prepare("INSERT INTO ownership (titledeed_no, owner_id, status_id, date_started) VALUES (:titledeed_no, :owner_id, 1, NOW())");
-            $stmt->execute([':titledeed_no' => $titleDeed, ':owner_id' => $submittedForm['owner_id']]);
-            $stmt->bindValue(':form_id', $form_id, PDO::PARAM_INT);
-            $stmt->execute();
-
-        }
-
-        // Update the status of the division form
-        $updateQuery = "UPDATE division_form SET status_id = 5 WHERE id = :form_id";
-        $stmt = $conn->prepare($updateQuery);
-        $stmt->bindValue(':form_id', $form_id, PDO::PARAM_INT);
-        $stmt->execute();
-
-        // De activate the current ownership
-        $stmt = $conn->prepare("UPDATE ownership SET status_id = 2, date_end = NOW() WHERE titledeed_no = :titledeed_no AND owner_id = :owner_id");
-        $stmt->execute([':titledeed_no' => $submittedForm['titledeed'], ':owner_id' => $submittedForm['owner_id']]);
-        $stmt->bindValue(':form_id', $form_id, PDO::PARAM_INT);
-        $stmt->execute();
-
-        echo "<script>alert('New title deeds created successfully!');</script>";
-        
-    }
-}
 
 
 ?>
@@ -123,6 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body style="background-color: #2C3E50">
     <header></header>
     <main>
+        <form action="process_titledeeds.php" method="POST">
         <div class="container" style="background-color: #BDC3C7; color:black;">
             <div class="row">
                 <div class="col-md-12">
@@ -210,6 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
         </div>
+        </form>
     </main>
     <footer></footer>
     <script>
@@ -229,7 +193,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     document.querySelector('form').addEventListener('submit', async function (event) {
         event.preventDefault(); // Prevent form submission
 
-        const formData = new FormData(this); //Get Form Data
+        //const formData = new FormData(this); //Get Form Data
 
         const titleDeedInputs = document.querySelectorAll('input[name="new_title_deeds[]"]');
         let allValid = true;
@@ -250,11 +214,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (allValid) {
+
+            const formData = {
+                form_id: <?php echo $form_id; ?>,
+                new_title_deeds: Array.from(titleDeedInputs).map(input => input.value.trim()),
+                owner_id: <?php echo $submittedForm['owner_id']; ?>,
+                landtypeid: <?php echo $submittedForm['landtypeid']; ?>,
+                divisions: <?php echo $submittedForm['divisions_coordinates']; ?>
+            };
             try {
             const response = await fetch('process_titledeeds.php', {
                 method: 'POST',
-                body: formData,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                
+                body: JSON.stringify(formData)
             });
+            alert("Form Submitted");
 
             const result = await response.json();
 

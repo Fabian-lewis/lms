@@ -6,23 +6,41 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+header('Content-Type: application/json');
+
 // Database connection
 $host = "localhost";
 $port = "5432";
 $dbname = "klms";
+$user = "postgres";
 $password = "gredev";
 
-header('Content-Type: application/json');
+try {
+    $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", $user, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    echo json_encode(['success' => false, 'message' => 'Database connection failed: ' . $e->getMessage()]);
+    exit();
+}
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// Read and decode JSON input
+$inputJSON = file_get_contents('php://input');
+$input = json_decode($inputJSON, true);
+
+if (!$input) {
+    echo json_encode(['success' => false, 'message' => 'Invalid JSON input', 'raw_data' => $inputJSON]);
+    exit();
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($input)) {
     try {
         $conn->beginTransaction(); // Start transaction
 
-        $newTitleDeeds = $_POST['new_title_deeds'] ?? [];
-        $form_id = $_POST['form_id'] ?? null;
-        $owner_id = $_POST['owner_id'] ?? null;
-        $landtypeid = $_POST['landtypeid'] ?? null;
-        $divisions = $_POST['divisions'] ?? [];
+        $newTitleDeeds = $input['new_title_deeds'] ?? [];
+        $form_id = $input['form_id'] ?? null;
+        $owner_id = $input['owner_id'] ?? null;
+        $landtypeid = $input['landtypeid'] ?? null;
+        $divisions = $input['divisions'] ?? [];
 
         if (empty($newTitleDeeds) || !$form_id || !$owner_id || !$landtypeid) {
             echo json_encode(['success' => false, 'message' => 'Missing required data']);
@@ -54,14 +72,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $conn->prepare("UPDATE division_form SET status_id = 5 WHERE id = :form_id");
         $stmt->execute([':form_id' => $form_id]);
 
-        // Deactivate current ownership
-        $stmt = $conn->prepare("UPDATE ownership SET status_id = 2, date_end = NOW() 
-                                WHERE titledeed_no = :titledeed_no AND owner_id = :owner_id");
-        $stmt->execute([
-            ':titledeed_no' => $_POST['old_titledeed'] ?? '',
-            ':owner_id' => $owner_id
-        ]);
-
         $conn->commit(); // Commit transaction
 
         echo json_encode(['success' => true, 'message' => 'Title deeds created successfully']);
@@ -69,5 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $conn->rollBack(); // Rollback transaction on error
         echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
     }
+} else {
+    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
 }
 ?>
