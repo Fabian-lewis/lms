@@ -8,6 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 // Check if form_id is set
 if (isset($_POST['form_id'])) {
     $form_id = $_POST['form_id'];
+    $form_type = $_POST['form_type'];
 
     // Database connection logic goes here
     $host = "localhost";
@@ -29,10 +30,11 @@ if (isset($_POST['form_id'])) {
         if (!$form_id) {
             die("Form ID is missing!");
         }
-    
-        $updateQuery = "UPDATE ownership_form SET status_id = 6 WHERE id = :form_id";
-        $stmt = $conn->prepare($updateQuery);
-        $stmt->bindParam(':form_id', $form_id, PDO::PARAM_INT);
+        if($form_type == "mutation") {
+            $updateQuery = "UPDATE division_form SET status_id = 6 WHERE id = :form_id";
+        } else if($form_type == "ownership") {
+            $updateQuery = "UPDATE ownership_form SET status_id = 6 WHERE id = :form_id";
+        }
     
         if ($stmt->execute()) {
             echo "Mutation Rejected Successfully!";
@@ -41,8 +43,6 @@ if (isset($_POST['form_id'])) {
             echo "Error rejecting mutation!";
         }
     }
-    
-
     // Example response
     echo "Mutation rejected successfully!";
 } else {
