@@ -222,9 +222,25 @@ if (empty($submittedForm)) {
             <div>
                 <a href="approveDivForm.php?form_id=<?php echo $submittedForm['id'];?>"><button onclick="acceptMutation()">Approve</button></a>
                
-                <a href="rejectMutation.php?form_id=<?php echo $submittedForm['id']?>&form_type=<?php echo 'ownership'?>"><button>Reject</button></a>
+                <button onclick="rejectDMutation()">Reject</button></a>
                 
             </div>
+            <script>
+                function rejectDMutation() {
+                    if (confirm("Are you sure you want to reject this mutation?")) {
+                        fetch('rejectMutation.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: new URLSearchParams({ 
+                                form_id: "<?php echo $submittedForm['id']; ?>",
+                                form_type: "division"})
+                        })
+                        .then(response => response.text())
+                        .then(data => alert(data)) // Show response from PHP
+                        .catch(error => console.error('Error:', error));
+                    }
+                }
+            </script>
         </div>
         <!-- Map -->
          <!--
