@@ -167,7 +167,9 @@ if (empty($submittedForm)) {
                         fetch('rejectMutation.php', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                            body: new URLSearchParams({ form_id: "<?php echo $submittedForm['id']; ?>" })
+                            body: new URLSearchParams({ 
+                                form_id: "<?php echo $submittedForm['id']; ?>",
+                                form_type: "ownership"})
                         })
                         .then(response => response.text())
                         .then(data => alert(data)) // Show response from PHP
@@ -220,7 +222,8 @@ if (empty($submittedForm)) {
             <div>
                 <a href="approveDivForm.php?form_id=<?php echo $submittedForm['id'];?>"><button onclick="acceptMutation()">Approve</button></a>
                
-                <button onclick="rejectMutation()">Reject</button>
+                <a href="rejectMutation.php?form_id=<?php echo $submittedForm['id']?>&form_type=<?php echo 'ownership'?>"><button>Reject</button></a>
+                
             </div>
         </div>
         <!-- Map -->
@@ -233,8 +236,8 @@ if (empty($submittedForm)) {
                     maxZoom: 19,
                 }).addTo(map);
 
-                const divisionsCoordinates = <?php echo $submittedForm['divisions_coordinates']; ?>;
-                const parcelCoordinates = <?php echo $submittedForm['coordinates']; ?>;
+                const divisionsCoordinates = <?php// echo $submittedForm['divisions_coordinates']; ?>;
+                const parcelCoordinates = <?php //echo $submittedForm['coordinates']; ?>;
 
                 // Function to style divisions with a unique color
 function styleDivisions(feature) {
