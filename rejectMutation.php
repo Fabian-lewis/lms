@@ -43,8 +43,12 @@ if (isset($_POST['form_id']) && isset($_POST['form_type'])) {
 
         // Check if the update was successful
         if ($stmt->rowCount() > 0) {
-            // Redirect to the dashboard after successful update
-            header("Location: dashboard.php?user_id=" . $_SESSION['user_id']);
+            // Set the user role in the session
+            $user['role'] = "ministry_official";
+            $_SESSION['role'] = $user['role'];
+
+            // Redirect to the dashboard with user_id and user_role as query parameters
+            header("Location: dashboard.php?user_id=" . urlencode($_SESSION['user_id']) . "&user_role=" . urlencode($user['role']));
             exit(); // Ensure no further code is executed after the redirect
         } else {
             echo "No rows were updated. The form ID might not exist.";

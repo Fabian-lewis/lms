@@ -2,7 +2,11 @@
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    if($_SESSION['role'] === 'ministry_official'){
+        ;
+    }else{
+        header("Location: login.php");
+    }
     exit();
 }
 $host = "localhost";
@@ -167,6 +171,65 @@ try {
     document.getElementById('role').innerText = "<?php echo $user['role']; ?>";
     //document.getElementById('jobSecurity').innerText = " /** echo $user['job_securityNumber'] ?: 'N/A'; ?>";*/
 
+    // Fetch Notifications
+async function fetchNotifications() {
+    try {
+        const response = await fetch('/api/notifications?user_id=<?php echo $_SESSION['user_id']; ?>');
+        const notifications = await response.json();
+        const notificationList = document.getElementById('notificationList');
+        const notificationCount = document.getElementById('notificationCount');
+
+        // Clear existing notifications
+        notificationList.innerHTML = '';
+
+        // Update notification count
+        notificationCount.innerText = notifications.filter(n => n.status === 'unread').length;
+
+        // Render notifications
+        notifications.forEach(notification => {
+            const li = document.createElement('li');
+            li.className = notification.status === 'unread' ? 'unread' : 'read';
+            li.innerHTML = `
+                <strong>${notification.title}</strong>
+                <p>${notification.message}</p>
+                <small>${new Date(notification.timestamp).toLocaleString()}</small>
+            `;
+            li.addEventListener('click', () => markAsRead(notification.id));
+            notificationList.appendChild(li);
+        });
+    } catch (error) {
+        console.error('Error fetching notifications:', error);
+    }
+}
+
+// Mark Notification as Read
+async function markAsRead(notificationId) {
+    try {
+        await fetch(`/api/notifications/${notificationId}/read`, { method: 'PUT' });
+        fetchNotifications(); // Refresh the list
+    } catch (error) {
+        console.error('Error marking notification as read:', error);
+    }
+}
+
+// Mark All Notifications as Read
+document.getElementById('markAllAsRead').addEventListener('click', async () => {
+    try {
+        await fetch('/api/notifications/mark-all-read', { method: 'PUT' });
+        fetchNotifications(); // Refresh the list
+    } catch (error) {
+        console.error('Error marking all notifications as read:', error);
+    }
+});
+
+// Toggle Notification Pane
+document.getElementById('notificationBtn').addEventListener('click', () => {
+    const pane = document.getElementById('notificationPane');
+    pane.style.display = pane.style.display === 'block' ? 'none' : 'block';
+});
+
+// Fetch notifications on page load
+fetchNotifications();
     
 </script>
 </head>
@@ -179,6 +242,12 @@ try {
             <ul>
                 <li><a href="index.php">Home</a></li>
                 <li><a href="profile.php">Profile</a></li>
+                <li>
+                <button id="notificationBtn">
+                    <img src="images/small_notification.png" alt="Notifications">
+                    <span id="notificationCount">0</span> <!-- Badge for unread notifications -->
+                </button>
+                </li>
             </ul>
         </nav>
     </header>
@@ -199,6 +268,17 @@ try {
             <button id="editProfileBtn">Edit Profile</button>
             <button id="logoutBtn">Logout</button>
         </div>
+
+        <div id="notificationPane" class="notification-pane">
+    <div class="notification-header">
+        <h3>Notifications</h3>
+        <button id="markAllAsRead">Mark All as Read</button>
+    </div>
+    <ul id="notificationList">
+        <!-- Notifications will be dynamically inserted here -->
+    </ul>
+</div>
+        
     </div>
     <div class="parcels-container">
         <h2>Your Lands</h2>
