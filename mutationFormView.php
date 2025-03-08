@@ -171,8 +171,16 @@ if (empty($submittedForm)) {
                                 form_id: "<?php echo $submittedForm['id']; ?>",
                                 form_type: "ownership"})
                         })
-                        .then(response => response.text())
-                        .then(data => alert(data)) // Show response from PHP
+                        .then(response => response.text()) 
+                        .then(data => {
+                            if (data.trim() === "success") {
+                                $_SESSION['role'] = "ministry_official";
+                                header("Location: dashboard.php"); // Redirect upon success
+                            //window.location.href = "dashboard.php"; // Redirect upon success
+                        } else {
+                            alert(data); // Show error message from PHP
+                        }
+                     })
                         .catch(error => console.error('Error:', error));
                     }
                 }
@@ -235,8 +243,17 @@ if (empty($submittedForm)) {
                                 form_id: "<?php echo $submittedForm['id']; ?>",
                                 form_type: "division"})
                         })
-                        .then(response => response.text())
-                        .then(data => alert(data)) // Show response from PHP
+                        .then(data => {
+                            if (data.status === "success") {
+                                $_SESSION['role'] = "ministry_official";
+                                $_SESSION['user_id'] = $_SESSION['user_id'];
+                                alert(data.message);
+                                header("Location: dashboard.php"); // Redirect upon success
+                            //window.location.href = "dashboard.php"; // Redirect upon success
+                        } else {
+                            alert("Error: " + data.message); // Show error message from PHP
+                        }
+                     })
                         .catch(error => console.error('Error:', error));
                     }
                 }

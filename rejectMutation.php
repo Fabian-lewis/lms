@@ -1,4 +1,5 @@
 <?php
+ob_start();  // Start output buffering
 session_start();
 
 // Check if the user is logged in
@@ -43,20 +44,47 @@ if (isset($_POST['form_id']) && isset($_POST['form_type'])) {
 
         // Check if the update was successful
         if ($stmt->rowCount() > 0) {
-            // Set the user role in the session
-            $user['role'] = "ministry_official";
-            $_SESSION['role'] = $user['role'];
+            echo json_encode(["status" => "success", "message" => "Mutation rejected successfully!"]);
 
-            // Redirect to the dashboard with user_id and user_role as query parameters
-            header("Location: dashboard.php?user_id=" . urlencode($_SESSION['user_id']) . "&user_role=" . urlencode($user['role']));
-            exit(); // Ensure no further code is executed after the redirect
+            try {
+                // Determine the correct table
+                $table = ($form_type == "division") ? "division_form" : "ownership_form";
+            
+                // Fetch Surveyor ID of the form
+                $surveyorQuery = "SELECT surveyor_id FROM $table WHERE id = :form_id";
+                $surveyorStmt = $conn->prepare($surveyorQuery);
+                $surveyorStmt->execute([':form_id' => $form_id]);
+                $surveyor_id = $surveyorStmt->fetchColumn();
+            
+                // Ensure surveyor_id is valid before inserting the notification
+                if ($surveyor_id) {
+                    // Send Notification
+                    $notificationQuery = "INSERT INTO notifications (sender_id, receiver_id, message, date, status_id) 
+                                          VALUES (:sender_id, :receiver_id, :message, NOW(), 9)";
+                    $notificationStmt = $conn->prepare($notificationQuery);
+                    $notificationStmt->execute([
+                        ':sender_id' => $_SESSION['user_id'],
+                        ':receiver_id' => $surveyor_id,
+                        ':message' => "Your $form_type mutation request, Form ID: $form_id has been rejected."
+                    ]);
+                } else {
+                    echo "Error: Could not find the surveyor for this form.";
+                }
+            } catch (PDOException $e) {
+                die("Error: " . $e->getMessage());
+            }
+            
+            exit();
         } else {
-            echo "No rows were updated. The form ID might not exist.";
+            echo json_encode(["status" => "error", "message" => "No rows were updated. The form ID might not exist."]);
         }
     } catch (PDOException $e) {
-        die("Error executing query: " . $e->getMessage());
+        echo json_encode(["status" => "error", "message" => "Error executing query: " . $e->getMessage()]);
     }
+
 } else {
-    echo "Missing required form fields.";
+    echo json_encode(["status" => "error", "message" => "Missing required form fields."]);
 }
+
+ob_end_flush();  // Flush output buffer
 ?>

@@ -35,7 +35,7 @@
             <input type="text" id="nat_id" name="nat_id" required>
 
             <label for="number">Check Out Number:</label>
-            <input type="tel" id="number"" name="number"" required>
+            <input type="tel" id="number" name="number" required>
 
             <label for="titledeed">Title Deed Number:</label>
             <input type="text" id="titledeed" name="titledeed" required>

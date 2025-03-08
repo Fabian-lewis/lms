@@ -2,11 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    if($_SESSION['role'] === 'ministry_official'){
-        ;
-    }else{
-        header("Location: login.php");
-    }
+    header("Location: login.php") || header("Location: mutationFormView.php");
     exit();
 }
 $host = "localhost";
@@ -121,10 +117,9 @@ try {
                 division_form d
                 JOIN status s ON d.status_id = s.id
                 JOIN users surveyor ON d.surveyor_id = surveyor.id
-                WHERE
-                d.status_id = :status_id";
+                ";
     $stmt5 = $conn->prepare($query3);
-    $stmt5->bindValue(':status_id', 3, PDO::PARAM_INT);
+    //$stmt5->bindValue(':status_id','d.status_id' , PDO::PARAM_INT);
     $stmt5->execute();
     $submittedDivisionForms = $stmt5->fetchAll(PDO::FETCH_ASSOC);
 
@@ -147,10 +142,9 @@ try {
                 JOIN users surveyor ON o.surveyor_id = surveyor.id
                 JOIN users curr_owner ON o.current_owner_natid = curr_owner.nat_id
                 JOIN users prop_owner ON o.proposed_owner_natid = prop_owner.nat_id
-                WHERE
-                o.status_id = :status_id";
+                ";
     $stmt6 = $conn->prepare($query4);
-    $stmt6->bindValue(':status_id', 3, PDO::PARAM_INT);
+    //$stmt6->bindValue(':status_id', 3, PDO::PARAM_INT);
     $stmt6->execute();
     $submittedOwnershipForms = $stmt6->fetchAll(PDO::FETCH_ASSOC);
 
@@ -292,6 +286,7 @@ try {
                     </div>
                 <?php endforeach; ?>
             
+            </div>
         </div>
         <div class="parcels-container">
             <h2>Ownership Change Mutation Forms</h2>
@@ -308,6 +303,25 @@ try {
 
                     </div>
                 <?php endforeach; ?>
+            </div>
+        </div>
+        <div class="parcels-container">
+            <h2>Lease Land Rates</h2>
+            <div class="card-wrapper">
+                <?php foreach ($submittedOwnershipForms as $form): ?>
+                    <div class="card">
+                        <h3>Form ID: <?php echo $form['id']; ?></h3>
+                        <p><strong>Date Submitted:</strong> <?php echo $form['date_submitted']; ?></p>
+                        <p><strong>Surveyor:</strong> <?php echo $form['surveyor']; ?></p>
+                        <p><strong>Current Owner:</strong> <?php echo $form['current_owner_name']; ?></p>
+                        <p><strong>Proposed Owner:</strong> <?php echo $form['proposed_owner_name']; ?></p>
+                        <p><strong>Status:</strong> <?php echo $form['status']; ?></p>
+                        <a href="mutationFormView.php?form_id=<?php echo $form['id'];?>&form_type=<?php echo 'ownership'?>" class="btn btn-primary">View Details</a>
+
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
     <?php endif; ?> 
     <!-- Modal for Editing Profile -->
     <div class="modal" id="editProfileModal">

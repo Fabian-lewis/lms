@@ -71,6 +71,26 @@ if (isset($_POST['form_id'], $_POST['current_owner_natid'], $_POST['proposed_own
         $stmt = $conn->prepare("UPDATE ownership_form SET status_id = 5 WHERE id = :form_id");
         $stmt->execute([':form_id' => $form_id]);
 
+        
+        // Send Notification to proposed owner
+        $stmt = $conn->prepare("INSERT INTO notifications (sender_id, receiver_id, message, date, status_id) VALUES (:sender_id, :receiver_id, 'Ownership transfer of Land Title Deed $titledeed_no approved. You now own the Land.'), NOW(), 9");
+        $stmt->execute([':sender_id' => $_SESSION['user_id'], ':receiver_id' => $proposed_owner_id]);
+         
+        // Send Notification to current Owner
+        $stmt = $conn->prepare("INSERT INTO notifications (sender_id, receiver_id, message, date, status_id) VALUES (:sender_id, :receiver_id, 'Ownership transfer of Land Title Deed $titledeed_no approved. The Land has a new owner'), NOW(), 9");
+        $stmt->execute([':sender_id' => $_SESSION['user_id'], ':receiver_id' => $current_owner_id]);
+
+        // Send Notification to Surveyor
+        $stmt = $conn->prepare("SELECT surveyor_id FROM ownership_form WHERE id = :form_id");
+        $stmt->execute([':form_id' => $form_id]);
+        $surveyor_id = $stmt->fetchColumn();
+        
+        $stmt = $conn->prepare("INSERT INTO notifications (sender_id, receiver_id, message, date, status_id) VALUES (:sender_id, :receiver_id, 'Ownership Mutation Form $form_id has been approved'), NOW(), 9");
+        $stmt->execute([':sender_id' => $_SESSION['user_id'], ':receiver_id' => $surveyor_id]);
+
+
+
+
         // Commit transaction
         $conn->commit();
 
