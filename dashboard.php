@@ -176,6 +176,7 @@ try {
             <ul>
                 <li><a href="index.php">Home</a></li>
                 <li><a href="profile.php">Profile</a></li>
+                <li><a href="onsaleparcels.php">Lands on Sale</a></li>
                 <li>
                 <button id="notificationBtn">
                     <img src="images/small_notification.png" alt="Notifications">
@@ -214,6 +215,7 @@ try {
 </div>
         
     </div>
+    
     <div class="parcels-container">
         <h2>Your Lands</h2>
         <div class="card-wrapper">

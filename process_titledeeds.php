@@ -47,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($input)) {
             echo json_encode(['success' => false, 'message' => 'Missing required data']);
             exit;
         }
-
         foreach ($newTitleDeeds as $index => $titleDeed) {
             $coordinates = json_encode($divisions[$index] ?? []);
 
@@ -68,7 +67,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($input)) {
                 ':owner_id' => $owner_id
             ]);
         }
-
         // Update division form status
         $stmt = $conn->prepare("UPDATE division_form SET status_id = 5 WHERE id = :form_id");
         $stmt->execute([':form_id' => $form_id]);
