@@ -207,7 +207,10 @@ try {
         <div id="notificationPane" class="notification-pane">
     <div class="notification-header">
         <h3>Notifications</h3>
-        <button id="markAllAsRead">Mark All as Read</button>
+        <a href="notifications.php">
+            <button id="markAllAsRead">Read All</button>
+        </a>
+        
     </div>
     <ul id="notificationList">
         <!-- Notifications will be dynamically inserted here -->

@@ -1,6 +1,8 @@
 <?php
 header('Content-Type: application/json');
 
+
+
 // Database connection
 $host = "localhost";
 $port = "5432";
@@ -16,10 +18,14 @@ try {
     exit;
 }
 
+
 // Get and validate input
 $data = json_decode(file_get_contents('php://input'), true);
-$parcelId = filter_var($data['parcel_id'] ?? null, FILTER_VALIDATE_INT);
-$buyerId = filter_var($data['buyer_id'] ?? null, FILTER_VALIDATE_INT);
+$parcelId =$data['parcelId'] ?? null;
+$buyerId = filter_var($data['userId'] ?? null, FILTER_VALIDATE_INT);
+
+
+
 
 if (!$parcelId || !$buyerId) {
     echo json_encode(['success' => false, 'message' => 'Invalid input']);
@@ -41,7 +47,7 @@ if (!$buyer) {
 // Fetch parcel owner ID
 $query = "SELECT owner_id FROM ownership WHERE titledeed_no = :parcel_id";
 $stmt = $conn->prepare($query);
-$stmt->bindParam(':parcel_id', $parcelId, PDO::PARAM_INT);
+$stmt->bindParam(':parcel_id', $parcelId, PDO::PARAM_STR);
 $stmt->execute();
 $ownerId = $stmt->fetchColumn();
 
@@ -52,7 +58,7 @@ if (!$ownerId) {
 
 // Create a new notification for the parcel owner
 $message = sprintf(
-    "%s %s has shown interest in your parcel with ID: %d. Contact them at %s or %s for more details.",
+    "%s %s has shown interest in your parcel with ID: %s. Contact them at %s or %s for more details.",
     $buyer['fname'],
     $buyer['sname'],
     $parcelId,
@@ -60,7 +66,7 @@ $message = sprintf(
     $buyer['phone']
 );
 
-$query = "INSERT INTO notifications (sender_id, receiver_id, message) VALUES (:sender_id, :receiver_id, :message)";
+$query = "INSERT INTO notifications (sender_id, receiver_id, message, date, status_id) VALUES (:sender_id, :receiver_id, :message, NOW(), 9)";
 $stmt = $conn->prepare($query);
 $stmt->bindParam(':sender_id', $buyerId, PDO::PARAM_INT);
 $stmt->bindParam(':receiver_id', $ownerId, PDO::PARAM_INT);

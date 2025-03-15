@@ -87,7 +87,7 @@ if(!$parcels){
                         <p><strong>Status:</strong> On-Sale</p>
                         <p><strong>Owner:</strong> <?php echo $parcel['owner_name']; ?></p>
                         <div class="profile-actions">
-                            <button onclick="notifyOwner(<?php echo $parcel['id'];?>,<?php echo $_SESSION['user_id'];?>)">Reach Out to Owner</button>
+                            <button onclick="notifyOwner('<?php echo $parcel['titledeedno']; ?>',<?php echo $_SESSION['user_id'];?>)">Reach Out to Owner</button>
                         </div>
                         
 
@@ -98,8 +98,10 @@ if(!$parcels){
         </div>
         <script>
             function notifyOwner(parcelId, userId) {
+                console.log("Parcel ID:", parcelId, "User ID:", userId);  // Debugging output
+
                 if(confirm("The owner of this land parcel will be notified about your interest.\nYour number will be shared with the owner.\nAre you sure you want to reach out to the owner of this land parcel?")){
-                    fetch('api/onSaleNotification.php', {
+                    fetch('api/onsaleNotification.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -109,8 +111,14 @@ if(!$parcels){
                             userId: userId
                         })
                     })
-                    .then(response => response.json())
+
+                    .then(response => {
+                        console.log(response);
+                        return response.json();
+                    })
                     .then(data=>{
+                        console.log(data);
+                        
                         if(data.success){
                             alert("The owner of this land parcel will be notified about your interest. Your number will be shared with the owner.");
                         } else{
@@ -122,8 +130,6 @@ if(!$parcels){
                         alert("An error occurred while trying to reach out to the owner of this land parcel. Please try again later.");
                     });
                 }
-                
-                
                 
             }
 

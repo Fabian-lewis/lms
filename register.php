@@ -20,12 +20,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fname = $_POST['fname'];
     $sname = $_POST['sname'];
     $role = $_POST['role'];
+    $phone = $_POST['phone'];
+    $email = $_POST['email'];
     $password = $_POST['password'];
     $nat_id = $_POST['nat_id'];
     $confirm_password = $_POST['confirm_password'];
 
     // Basic validation
-    if (empty($fname) || empty($sname) || empty($role) || empty($password) || empty($confirm_password) || empty($nat_id)) {
+    if (empty($fname) || empty($sname) || empty($role) || empty($password) || empty($confirm_password) || empty($nat_id) || empty($phone) || empty($email)) {
         die("All fields are required.");
     }
 
@@ -38,12 +40,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Insert data into the users table
     try {
-        $stmt = $conn->prepare("INSERT INTO users (fname, sname, role, password, nat_id) VALUES (:fname, :sname, :role, :password, :nat_id)");
+        $stmt = $conn->prepare("INSERT INTO users (fname, sname, role, password, nat_id, email, phone) VALUES (:fname, :sname, :role, :password, :nat_id, :email, :phone)");
         $stmt->bindParam(':fname', $fname);
         $stmt->bindParam(':sname', $sname);
         $stmt->bindParam(':role', $role);
         $stmt->bindParam(':password', $hashed_password);
         $stmt->bindParam(':nat_id', $nat_id);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':phone', $phone);
         
         if ($stmt->execute()) {
             echo '<script>
@@ -96,6 +100,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <label for="nat_id">National ID:</label>
             <input type="text" id="nat_id" name="nat_id" required>
+
+            <label for="phone">Phone:</label>
+            <input type="text" id="phone" name="phone" required>
+
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email" required>
 
             <label for="role">Role:</label>
             <select id="role" name="role" required>
