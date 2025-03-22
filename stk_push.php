@@ -74,13 +74,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $response = stkPush($phone, $amount, $titleDeed);
-    
-    if ($response->ResponseCode == "0") {
-        echo "<script>alert('Payment request sent successfully! Check your phone to complete payment.');</script>";
-        echo "<script>window.location.href = 'success_page.php';</script>"; // Redirect to success page
+    if ($response->ResponseCode == 0) {
+        header('location:parcelDetails.php');
     } else {
-        echo "<script>alert('Payment failed. Please try again.');</script>";
-        echo "<script>window.location.href = 'pay_rates.php';</script>"; // Redirect back to payment page
+        echo "Failed to initiate payment";
     }
 
 // # access token

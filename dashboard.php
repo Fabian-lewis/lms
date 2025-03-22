@@ -156,13 +156,19 @@ if($user){
 <body>
 <header>
         <div class="logo">
-            <img src="images/lms logo2.png" alt="LMS Logo">
+            <img src="images/lms-logo2.png" alt="LMS Logo">
         </div>
         <nav>
             <ul>
                 <li><a href="index.php">Home</a></li>
                 <li><a href="profile.php">Profile</a></li>
                 <li><a href="onsaleparcels.php">Lands on Sale</a></li>
+                <?php if($_SESSION['role'] === 'surveyor'): ?>
+                    <li><a href="mutationForm.php">Mutation Forms</a></li>
+                <?php endif; ?>
+                <?php if($_SESSION['role'] === 'ministry_official'): ?>
+                    <li><a href="rate_management.php">Rates</a></li>
+                <?php endif; ?>
                 <li>
                 <button id="notificationBtn">
                     <img src="images/small_notification.png" alt="Notifications">
