@@ -1,3 +1,11 @@
+<?php
+    session_start();
+    if(!isset($_SESSION['user_id'])){
+        header('location:parcelDetails.php');
+    }
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +22,7 @@
 <body>
     <header>
     <div class="logo">
-            <img src="images/lms logo2.png" alt="LMS Logo">
+            <img src="images/lms-logo2.png" alt="LMS Logo">
         </div>
         <div class="head">
             <h2>Rate Payment</h2>
@@ -24,15 +32,12 @@
     <main>
     <div class="pay-rates-container">
         <h3>Rate Payment Details</h3>
-        <form action="pay_rates.php" method="POST">
+        <form action="stk_push.php" method="POST">
             <label for="fname">First Name:</label>
             <input type="text" id="fname" name="fname" required>
 
             <label for="sname">Surname:</label>
             <input type="text" id="sname" name="sname" required>
-
-            <label for="nat_id">National ID:</label>
-            <input type="text" id="nat_id" name="nat_id" required>
 
             <label for="number">Check Out Number:</label>
             <input type="tel" id="number" name="number" required>
