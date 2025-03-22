@@ -1,5 +1,5 @@
 <?php
-$host = "dpg-cvfadurqf0us73fo3jf0-a";  // Your Render database host
+$host = " dpg-cvfadurqf0us73fo3jf0-a.oregon-postgres.render.com";  // Your Render database host
 $dbname = "klms";
 $user = "klms_user";
 $password = "CRwSIcxPiQb6sz0k8ShbroeNIrPxhdu0";
