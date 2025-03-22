@@ -1,12 +1,15 @@
 <?php
-$dsn = " pgsql: host=dpg-cvfadurqf0us73fo3jf0-a.oregon-postgres.render.com;port=5432;dbname=klms;";  // Your Render database host
-$user = "klms_user";
-$password = "CRwSIcxPiQb6sz0k8ShbroeNIrPxhdu0";
+$host = getenv('DB_HOST'); // Render database hostname
+$dbname = getenv('DB_NAME');
+$user = getenv('DB_USER');
+$pass = getenv('DB_PASS');
 
 try {
-    $pdo = new PDO($dsn, $user, $password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-    echo "Database connection successful!";
+    $pdo = new PDO("pgsql:host=$host;dbname=$dbname", $user, $pass, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+    ]);
 } catch (PDOException $e) {
     die("Database connection failed: " . $e->getMessage());
 }
+
 ?>

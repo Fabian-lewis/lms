@@ -3,7 +3,10 @@ FROM php:8.1-apache
 
 # Install necessary PHP extensions
 RUN apt-get update && apt-get install -y libpq-dev \
-    && docker-php-ext-install pdo pdo_pgsql
+    && docker-php-ext-install pdo pdo_pgsql pgsql
+
+# Enable Apache rewrite module
+RUN a2enmod rewrite
 
 # Set working directory inside the container
 WORKDIR /var/www/html
