@@ -5,7 +5,7 @@ $user = getenv('DB_USER');
 $pass = getenv('DB_PASS');
 
 try {
-    $pdo = new PDO("pgsql:host=$host;dbname=$dbname", $user, $pass, [
+    $conn = new PDO("pgsql:host=$host;dbname=$dbname", $user, $pass, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     ]);
 } catch (PDOException $e) {
