@@ -2,16 +2,10 @@
 header('Content-Type: application/json');
 
 // Database connection
-$host = "localhost";
-$port = "5432";
-$dbname = "klms";
-$user = "postgres";
-$password = "gredev";
+require 'configs.php';
 
-try {
-    $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", $user, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+try{
     // Query the database
     $query = "SELECT amount, year FROM rates_distribution";
     $stmt = $conn->prepare($query);

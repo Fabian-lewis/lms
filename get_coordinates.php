@@ -2,15 +2,9 @@
 header('Content-Type: application/json');
 
 // Database connection
-$host = "localhost";
-$port = "5432";
-$dbname = "klms";
-$user = "postgres";
-$password = "gredev";
+require 'configs.php';
 
-try {
-    $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", $user, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+try{
 
     // Get the title deed number from the request
     $data = json_decode(file_get_contents('php://input'), true);

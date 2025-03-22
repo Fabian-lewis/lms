@@ -23,19 +23,7 @@ if (isset($_POST['form_id'], $_POST['current_owner_natid'], $_POST['proposed_own
     }
 
     // Database connection
-    $host = "localhost";
-    $port = "5432";
-    $dbname = "klms";
-    $username = "postgres";
-    $password = "gredev";
-
-    try {
-        $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", $username, $password);
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch (PDOException $e) {
-        echo json_encode(["status" => "error", "message" => "Database connection failed"]);
-        exit();
-    }
+    require 'configs.php';
 
     try {
         // Begin transaction

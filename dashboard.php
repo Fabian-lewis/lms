@@ -5,18 +5,10 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: login.php") || header("Location: mutationFormView.php");
     exit();
 }
-$host = "localhost";
-$port = "5432";
-$dbname = "klms";
-//$user = "postgres";
-$password = "gredev";
 
-try {
-    $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", 'postgres', $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
-}
+// Database connection
+require 'configs.php';
+
 $id = $_SESSION['user_id'];
 $stmt = $conn->prepare("SELECT fname, sname FROM users WHERE id = ?");
 $stmt->execute([$id]);

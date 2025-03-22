@@ -1,19 +1,6 @@
 <?php
 // Database connection details
-$host = "localhost";
-$port = "5432";
-$dbname = "klms";
-$user = "postgres";
-$password = "gredev";
-
-try {
-    // Establish connection to PostgreSQL database
-    $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", $user, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    //echo "Connected successfully to PostgreSQL!";
-} catch (PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
-}
+require 'configs.php';
 
 // Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

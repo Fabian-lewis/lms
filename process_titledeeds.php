@@ -9,19 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 header('Content-Type: application/json');
 
 // Database connection
-$host = "localhost";
-$port = "5432";
-$dbname = "klms";
-$user = "postgres";
-$password = "gredev";
-
-try {
-    $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", $user, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    echo json_encode(['success' => false, 'message' => 'Database connection failed: ' . $e->getMessage()]);
-    exit();
-}
+require 'configs.php';
 
 // Read and decode JSON input
 $inputJSON = file_get_contents('php://input');

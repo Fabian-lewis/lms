@@ -13,19 +13,7 @@ if (isset($_POST['form_id']) && isset($_POST['form_type'])) {
     $form_type = $_POST['form_type'];
 
     // Database connection details
-    $host = "localhost";
-    $port = "5432";
-    $dbname = "klms";
-    $user = "postgres";
-    $password = "gredev";
-
-    try {
-        // Establish a database connection
-        $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", $user, $password);
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch (PDOException $e) {
-        die("Database Connection Failed: " . $e->getMessage());
-    }
+    require 'configs.php';
 
     // Determine the table and query based on form_type
     if ($form_type == "division") {

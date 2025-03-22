@@ -20,16 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $date_submitted = date('Y-m-d'); // Format date as YYYY-MM-DD
 
         // Database connection details
-        $host = "localhost";
-        $port = "5432";
-        $dbname = "klms";
-        $user = "postgres";
-        $password = "gredev";
-        
-        try {
-            // Establish database connection
-            $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", $user, $password);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        require 'configs.php';
+
+        try{
 
             // Prepare the SQL query
             $stmt = $conn->prepare("INSERT INTO division_form (titledeed, number_of_divs, divisions_coordinates, surveyor_id, status_id, date_submitted) 
@@ -67,16 +60,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $date_submitted = date('Y-m-d'); // Format date as YYYY-MM-DD
 
         // Database connection details
-        $host = "localhost";
-        $port = "5432";
-        $dbname = "klms";
-        $user = "postgres";
-        $password = "gredev";
+        require 'configs.php';
 
-        try {
-            // Establish database connection
-            $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", $user, $password);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try{
 
             // Prepare the SQL query
             $stmt = $conn->prepare("INSERT INTO ownership_form (titledeed_no, current_owner_natid, proposed_owner_natid, surveyor_id, status_id, date_submitted) 

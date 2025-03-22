@@ -5,18 +5,9 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: dashboard.php");
     exit();
 }
-$host = "localhost";
-$port = "5432";
-$dbname = "klms";
-//$user = "postgres";
-$password = "gredev";
+// Database connection
+require 'configs.php';
 
-try {
-    $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", 'postgres', $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
-}
 
 $query = "SELECT
             n.id,
