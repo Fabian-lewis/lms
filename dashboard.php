@@ -19,12 +19,6 @@ if($user){
     $_SESSION['sname'] = $user['sname'];
 }
 // Pass data to the profile page
-try {
-    $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", 'postgres', $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
-}
     $id = $_SESSION['user_id'];
     $query = "SELECT
                 p.id,
