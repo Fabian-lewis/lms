@@ -1,13 +1,13 @@
 <?php
-// Database connection
-$host = "localhost";
-$port = "5432";
+$host = "dpg-cvfadurqf0us73fo3jf0-a";  // Your Render database host
 $dbname = "klms";
-$password = "gredev";
+$user = "klms_user";
+$password = "CRwSIcxPiQb6sz0k8ShbroeNIrPxhdu0";
+
 try {
-    $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", 'postgres', $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = new PDO("pgsql:host=$host;dbname=$dbname", $user, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
+    die("Database connection failed: " . $e->getMessage());
 }
 ?>
