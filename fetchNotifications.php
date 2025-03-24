@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 require 'configs.php';
 
 
-$query = "SELECT * FROM notifications WHERE receiver_id = :receiver_id";
+$query = "SELECT * FROM notifications WHERE receiver_id = :receiver_id AND status_id = 9";
 $stmt = $conn->prepare($query);
 $stmt->bindValue(':receiver_id', $_SESSION['user_id'], PDO::PARAM_INT);
 $stmt->execute();
