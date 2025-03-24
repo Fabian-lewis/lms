@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt3->bindParam(':receiver_id', $owner_id);
         $stmt3->bindParam(':message', 'Your land has been searched by '.$user['fname'].' '.$user['sname']. 'Phone number: '.$user['phone']);
         $stmt3->execute();
-        
+
 
         // Redirect to parcelDetails.php use the titledeed to get the parcel details
         header('location:parcelDetails.php?titledeed='.$parcel_id);
@@ -111,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <main>
     <div class="registration-container">
         <h2>Land search</h2>
-        <form action="register.php" method="POST">
+        <form action="landsearch.php" method="POST">
             <label for="userNatId">National ID:</label>
             <input type="text" id="userNatId" name="userNatId" required>
 
@@ -122,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="text" id="titledeed" name="titledeed" required>
 
 
-            <button type="submit">Register</button>
+            <button type="submit">Search</button>
         </form>
     </div>
     </main>
