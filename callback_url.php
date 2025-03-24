@@ -1,17 +1,11 @@
 <?php
-session_start();
-if (!isset($_SESSION['user_id'])) {
-    header('location: stk_push.php');
-    exit();
-}
-
 header("Content-Type: application/json");
 
 // Database connection
-require_once 'configs.php';  // Ensure this contains the $conn (PDO) connection
+require_once 'configs.php';
 
 // Get title deed from the URL parameter
-$titleDeed = isset($_GET['titledeed']) ? $_GET['titledeed'] : null;
+$titleDeed = $_GET['titledeed'] ?? null;
 
 // Log M-Pesa Response
 $mpesaResponse = file_get_contents("php://input");
@@ -19,6 +13,16 @@ $logFile = "mpesa_callback.json";
 file_put_contents($logFile, $mpesaResponse . PHP_EOL, FILE_APPEND);
 
 $response = json_decode($mpesaResponse, true);
+
+// Helper function to safely get values
+function getMpesaValue($items, $key) {
+    foreach ($items as $item) {
+        if ($item['Name'] === $key) {
+            return $item['Value'] ?? null;
+        }
+    }
+    return null;
+}
 
 // Check if response is valid
 if (!$response || !isset($response['Body']['stkCallback']['ResultCode'])) {
@@ -30,13 +34,15 @@ $ResultCode = $response['Body']['stkCallback']['ResultCode'];
 
 if ($ResultCode == 0) {
     // Extract payment details
-    $amountPaid = $response['Body']['stkCallback']['CallbackMetadata']['Item'][0]['Value'];
-    $receiptNumber = $response['Body']['stkCallback']['CallbackMetadata']['Item'][1]['Value'];
-    $transactionDate = date('Y-m-d H:i:s');  // Use PHP date instead of MySQL now()
-    $phoneNumber = $response['Body']['stkCallback']['CallbackMetadata']['Item'][4]['Value'];
+    $items = $response['Body']['stkCallback']['CallbackMetadata']['Item'];
+    $amountPaid = getMpesaValue($items, "Amount");
+    $receiptNumber = getMpesaValue($items, "MpesaReceiptNumber");
+    $phoneNumber = getMpesaValue($items, "PhoneNumber");
 
-    // Get user ID from session
-    $userId = $_SESSION['user_id'];
+    if (!$amountPaid || !$receiptNumber || !$phoneNumber) {
+        echo json_encode(['message' => 'Missing required payment details']);
+        exit();
+    }
 
     // Ensure title deed is provided
     if (!$titleDeed) {
@@ -44,13 +50,25 @@ if ($ResultCode == 0) {
         exit();
     }
 
-    // Insert payment into `rate_payment` table
+    // Get user ID from parcels table
+    $stmt = $conn->prepare("SELECT user_id FROM parcels WHERE titledeed_no = :titledeed");
+    $stmt->bindParam(':titledeed', $titleDeed);
+    $stmt->execute();
+    $owner = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$owner) {
+        echo json_encode(['message' => 'Owner not found for this title deed']);
+        exit();
+    }
+
+    $userId = $owner['user_id'];
+
+    // Insert payment into rate_payment table
     $query = "INSERT INTO rate_payment (user_id, titledeed_no, datepayed, amount) 
-              VALUES (:id, :titledeed, :datepayed, :amount)";
+              VALUES (:id, :titledeed, NOW(), :amount)";
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':id', $userId, PDO::PARAM_INT);
     $stmt->bindParam(':titledeed', $titleDeed, PDO::PARAM_STR);
-    $stmt->bindParam(':datepayed', $transactionDate, PDO::PARAM_STR);
     $stmt->bindParam(':amount', $amountPaid, PDO::PARAM_STR);
 
     if ($stmt->execute()) {
@@ -61,4 +79,8 @@ if ($ResultCode == 0) {
 } else {
     echo json_encode(['message' => 'Payment failed']);
 }
+
+// Ensure response is sent to M-Pesa
+http_response_code(200);
+exit();
 ?>
