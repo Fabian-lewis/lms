@@ -56,14 +56,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindParam(':ownerNatId', $ownerNatId);
             $stmt->bindParam(':titledeed', $titledeed);
             
-            if ($stmt->execute()) {
-                echo '<script>
-                        alert("Sucess Land search has been registered successfully");
-                    </script>';
+            // if ($stmt->execute()) {
+            //     echo '<script>
+            //             alert("Sucess Land search has been registered successfully");
+            //         </script>';
                 
-            } else {
-                echo "Error: Could not register the Land search.";
-            }
+            // } else {
+            //     echo "Error: Could not register the Land search.";
+            // }
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();
         }
