@@ -33,15 +33,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $parcel_id = $stmt2->fetch();
 
     // Ensure the owner owns the parcel in ownership table join with parcel table to fetch parcel id
-    $stmt3 = $conn->prepare("SELECT * FROM ownership WHERE parcel_id = :parcel_id AND owner_id = :owner_id");
-    $stmt3->bindParam(':parcel_id', $parcel_id['id']);
+    $stmt3 = $conn->prepare("SELECT * FROM ownership WHERE titledeed_no = :titledeed AND owner_id = :owner_id");
+    $stmt3->bindParam(':titledeed', $titledeed);
     $stmt3->bindParam(':owner_id', $owner['id']);
     $stmt3->execute();
     $ownership = $stmt3->fetch();
 
     if(!$ownership){
         die("Owner does not own the parcel");
-        
+
     }else{
         $parcel_id = $parcel_id['id'];
 
@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <header>
     <div class="logo">
-            <img src="images/lms-logo2.png" alt="LMS Logo">
+            <img src="images/lms-logo2.PNG" alt="LMS Logo">
         </div>
         <div class="head">
             <h2>Land Search</h2>
