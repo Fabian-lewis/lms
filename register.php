@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <header>
     <div class="logo">
-            <img src="images/lms logo2.png" alt="LMS Logo">
+            <img src="images/lms-logo2.png" alt="LMS Logo">
         </div>
         <div class="head">
             <h2>Registration</h2>
