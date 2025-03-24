@@ -40,7 +40,7 @@ $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
     <header>
         <div class="logo">
-            <img src="images/lms logo2.png" alt="LMS Logo">
+            <img src="images/lms_logo2.PNG" alt="LMS Logo">
         </div>
         <h1>Notifications</h1>
         <nav>
@@ -52,37 +52,46 @@ $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <main>
         <div class="card-wrapper">
         <?php foreach ($notifications as $notification): ?>
-                    <div class="card">
-                        <h3>From: <?= $notification['sender_name'] ?></h3>
-                        <p>EMAIL: <?= $notification['email'] ?></p>
-                        <p>PHONE: <?= $notification['phone'] ?></p>
-                        <p><?= $notification['message'] ?></p>
-                        <p><?= $notification['date'] ?></p>
-                        <button >Mark as Read</button>
+    <div class="card">
+        <h3>From: <?= $notification['sender_name'] ?></h3>
+        <p>EMAIL: <?= $notification['email'] ?></p>
+        <p>PHONE: <?= $notification['phone'] ?></p>
+        <p><?= $notification['message'] ?></p>
+        <p><?= $notification['date'] ?></p>
+        <button class="mark-read-btn" data-id="<?= $notification['id'] ?>">Mark as Read</button>
+    </div>
+<?php endforeach; ?>
 
-                    </div>
-                <?php endforeach; ?>
         </div>
 
         <script>
-            const buttons = document.querySelectorAll('button');
-            buttons.forEach(button => {
-                button.addEventListener('click', async (e) => {
-                    const notificationId = e.target.parentElement.querySelector('h2').textContent;
-                    const response = await fetch('api/mark_as_read.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ notificationId })
-                    });
-                    const data = await response.json();
-                    if (data.success) {
-                        e.target.parentElement.remove();
-                    }
+    document.addEventListener("DOMContentLoaded", () => {
+        const buttons = document.querySelectorAll('.mark-read-btn');
+        
+        buttons.forEach(button => {
+            button.addEventListener('click', async (e) => {
+                const notificationId = e.target.getAttribute('data-id');
+
+                const response = await fetch('api/mark_as_read.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ notificationId: parseInt(notificationId) })
                 });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    e.target.parentElement.remove(); // Remove card after successful update
+                } else {
+                    alert("Failed to mark notification as read.");
+                }
             });
-        </script>
+        });
+    });
+</script>
+
     </main>
 </body>
 </html>
