@@ -27,57 +27,82 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
      $owner = $stmt1->fetch();
 
     // check if title deed exists. Fetch the parcel id
-    $stmt2 = $conn->prepare("SELECT id FROM parcel WHERE titledeedno = :titledeed");
+    $stmt2 = $conn->prepare("SELECT * FROM parcel WHERE titledeedno = :titledeed");
     $stmt2->bindParam(':titledeed', $titledeed);
     $stmt2->execute();
     $parcel_id = $stmt2->fetch();
 
-    if (!$user || !$owner || !$parcel_id) {
-        die("User or owner or parcel does not exist.");
-    }else{
+    // Ensure the owner owns the parcel in ownership table join with parcel table to fetch parcel id
+    $stmt3 = $conn->prepare("SELECT * FROM ownership WHERE parcel_id = :parcel_id AND owner_id = :owner_id");
+    $stmt3->bindParam(':parcel_id', $parcel_id['id']);
+    $stmt3->bindParam(':owner_id', $owner['id']);
+    $stmt3->execute();
+    $ownership = $stmt3->fetch();
 
-        // Insert data into the users table
-    try {
-        $stmt = $conn->prepare("INSERT INTO landsearch (user_natId, owner_natId, titledeed, date) VALUES (:userNatId, :ownerNatId, :titledeed, NOW())");
-        $stmt->bindParam(':userNatId', $userNatId);
-        $stmt->bindParam(':ownerNatId', $ownerNatId);
-        $stmt->bindParam(':titledeed', $titledeed);
+    if(!$ownership){
+        die("Owner does not own the parcel");
         
-        if ($stmt->execute()) {
-            echo '<script>
-                    alert("Sucess Land search has been registered successfully");
-                </script>';
+    }else{
+        $parcel_id = $parcel_id['id'];
+
+        if (!$user || !$owner || !$parcel_id) {
+            die("User or owner or parcel does not exist.");
+        }else{
+    
+            // Insert data into the users table
+        try {
+            $stmt = $conn->prepare("INSERT INTO landsearch (user_natId, owner_natId, titledeed, date) VALUES (:userNatId, :ownerNatId, :titledeed, NOW())");
+            $stmt->bindParam(':userNatId', $userNatId);
+            $stmt->bindParam(':ownerNatId', $ownerNatId);
+            $stmt->bindParam(':titledeed', $titledeed);
             
-        } else {
-            echo "Error: Could not register the Land search.";
+            if ($stmt->execute()) {
+                echo '<script>
+                        alert("Sucess Land search has been registered successfully");
+                    </script>';
+                
+            } else {
+                echo "Error: Could not register the Land search.";
+            }
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
         }
-    } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
+        // Get user ID
+        $stmt = $conn->prepare("SELECT * FROM users WHERE nat_id = :nat_id");
+        $stmt->bindParam(':nat_id', $userNatId);
+        $stmt->execute();
+        $user = $stmt->fetch();
+    
+       // Get owner id
+        $stmt1 = $conn->prepare("SELECT id FROM users WHERE nat_id = :nat_id");
+        $stmt1->bindParam(':nat_id', $ownerNatId);
+        $stmt1->execute();
+        $owner = $stmt1->fetch();
+        $owner_id = $owner['id'];
+    
+         // Send Notification to owner
+            $stmt3 = $conn->prepare("INSERT INTO notifications (receiver_id, message, date, status_id) VALUES (:receiver_id, :message, NOW(), 9)");
+            $message = 'Your land has been searched by '.$user['fname'].' '.$user['sname']. 'Phone number: '.$user['phone'];
+            $stmt3->bindParam(':receiver_id', $owner_id);
+            $stmt3->bindParam(':message', $message);
+            $stmt3->execute();
+    
+    
+    
+        // Ensure $parcel_id is not empty
+        if (!empty($parcel_id)) {
+            header('Location: parcelDetails.php?parcel_id=' . urlencode($parcel_id['id']));
+            exit(); // Stop further script execution after redirect
+        } else {
+            echo "Error: Invalid parcel ID.";
+        }
+    
+        }
     }
-    // Get user ID
-    $stmt = $conn->prepare("SELECT * FROM users WHERE nat_id = :nat_id");
-    $stmt->bindParam(':nat_id', $userNatId);
-    $stmt->execute();
-    $user = $stmt->fetch();
-
-   // Get owner id
-    $stmt1 = $conn->prepare("SELECT id FROM users WHERE nat_id = :nat_id");
-    $stmt1->bindParam(':nat_id', $ownerNatId);
-    $stmt1->execute();
-    $owner = $stmt1->fetch();
-    $owner_id = $owner['id'];
-
-     // Send Notification to owner
-        $stmt3 = $conn->prepare("INSERT INTO notifications (receiver_id, message, date, status_id) VALUES (:receiver_id, :message, NOW(), 9)");
-        $message = 'Your land has been searched by '.$user['fname'].' '.$user['sname']. 'Phone number: '.$user['phone'];
-        $stmt3->bindParam(':receiver_id', $owner_id);
-        $stmt3->bindParam(':message', $message);
-        $stmt3->execute();
 
 
-        // Redirect to parcelDetails.php use the titledeed to get the parcel details
-        header('location:parcelDetails.php?titledeed='.$parcel_id);
-    }
+
+    
 
    
 
