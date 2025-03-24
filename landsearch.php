@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
         // Ensure $parcel_id is not empty
         if (!empty($parcel_id)) {
-            header('Location: parcelDetails.php?parcel_id=' . urlencode($parcel_id['id']));
+            header('Location: parcelDetails.php?parcel_id=' . urlencode($parcel_id));
             exit(); // Stop further script execution after redirect
         } else {
             echo "Error: Invalid parcel ID.";
@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <header>
     <div class="logo">
-            <img src="images/lms-logo2.PNG" alt="LMS Logo">
+            <img src="images/lms_logo2.PNG" alt="LMS Logo">
         </div>
         <div class="head">
             <h2>Land Search</h2>
