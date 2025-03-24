@@ -69,8 +69,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
      // Send Notification to owner
         $stmt3 = $conn->prepare("INSERT INTO notifications (receiver_id, message, date, status_id) VALUES (:receiver_id, :message, NOW(), 9)");
+        $message = 'Your land has been searched by '.$user['fname'].' '.$user['sname']. 'Phone number: '.$user['phone'];
         $stmt3->bindParam(':receiver_id', $owner_id);
-        $stmt3->bindParam(':message', 'Your land has been searched by '.$user['fname'].' '.$user['sname']. 'Phone number: '.$user['phone']);
+        $stmt3->bindParam(':message', $message);
         $stmt3->execute();
 
 
