@@ -1,5 +1,9 @@
 <?php
 header("Content-Type: application/json");
+// session_start();
+// if(!isset($_SESSION['user_id'])){
+//     header('location:stk_push.php');
+// }
 
 // Database connection
 require_once 'configs.php';
@@ -51,16 +55,34 @@ if ($ResultCode == 0) {
         exit();
     }
 
-    // Get user ID from parcels table
-    $stmt = $conn->prepare("SELECT user_id FROM parcels WHERE titledeed_no = :titledeed");
+    // Get parcel id from parcels table
+    $stmt = $conn->prepare("SELECT id FROM parcels WHERE titledeed_no = :titledeed");
     $stmt->bindParam(':titledeed', $titleDeed);
+    $stmt->execute();
+    $parcel_id = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Get userID from users ownership
+    $stmt = $conn->prepare("SELECT user_id FROM ownership WHERE parcel_id = :parcel_id");
+    $stmt->bindParam(':parcel_id', $parcel_id['id']);
     $stmt->execute();
     $owner = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$owner) {
-        echo json_encode(['message' => 'Owner not found for this title deed']);
-        exit();
+             echo json_encode(['message' => 'Owner not found for this title deed']);
+            exit();
     }
+
+
+    // // Get parcel id from parcels table
+    // $stmt = $conn->prepare("SELECT user_id FROM parcels WHERE titledeed_no = :titledeed");
+    // $stmt->bindParam(':titledeed', $titleDeed);
+    // $stmt->execute();
+    // $owner = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // if (!$owner) {
+    //     echo json_encode(['message' => 'Owner not found for this title deed']);
+    //     exit();
+    // }
 
     $userId = $owner['user_id'];
 
