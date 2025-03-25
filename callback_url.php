@@ -4,8 +4,8 @@ header("Content-Type: application/json");
 // Database connection
 require_once 'configs.php';
 
-// Get title deed from the URL parameter
-$titleDeed = $_GET['titledeed'] ?? null;
+// // Get title deed from the URL parameter
+// $titleDeed = $_GET['titledeed'] ?? null;
 
 // Log M-Pesa Response
 $mpesaResponse = file_get_contents("php://input");
@@ -38,8 +38,9 @@ if ($ResultCode == 0) {
     $amountPaid = getMpesaValue($items, "Amount");
     $receiptNumber = getMpesaValue($items, "MpesaReceiptNumber");
     $phoneNumber = getMpesaValue($items, "PhoneNumber");
+    $titleDeed =    getMpesaValue($items, "AccountReference");
 
-    if (!$amountPaid || !$receiptNumber || !$phoneNumber) {
+    if (!$amountPaid || !$receiptNumber || !$phoneNumber || !$titleDeed) {
         echo json_encode(['message' => 'Missing required payment details']);
         exit();
     }
