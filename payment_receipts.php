@@ -39,9 +39,6 @@ $payments = $stmt -> fetchAll(PDO :: FETCH_ASSOC);
     </header>
     <main>
         <div class="card-wrapper">
-            <h3>Payment Receipts</h3>
-            <div class="card-wrapper">
-
                 <?php foreach($payments as $payment): ?>
                     <div class="card">
                         <h3>DATE: <?= $payment['datepayed'];?></h3>

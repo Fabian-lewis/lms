@@ -169,6 +169,7 @@ if($user){
                 <?php if($_SESSION['role'] === 'ministry_official'): ?>
                     <li><a href="rate_management.php">Rates</a></li>
                 <?php endif; ?>
+                <li><a href="payment_receipts.php">Payment Receipts</a></li>
                 <li>
                 <button id="notificationBtn">
                     <img src="images/small_notification.png" alt="Notifications">
