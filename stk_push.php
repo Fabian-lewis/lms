@@ -1,8 +1,8 @@
 <?php
 session_start();
-if(!isset($_SESSION['user_id'])){
-    header('location:pay_rates.php');
-}
+// if(!isset($_SESSION['user_id'])){
+//     header('location:pay_rates.php');
+// }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $phone = $_POST['number']; // User's phone number
