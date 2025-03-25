@@ -55,15 +55,15 @@ if ($ResultCode == 0) {
         exit();
     }
 
-    // Get parcel id from parcels table
-    $stmt = $conn->prepare("SELECT id FROM parcels WHERE titledeed_no = :titledeed");
-    $stmt->bindParam(':titledeed', $titleDeed);
-    $stmt->execute();
-    $parcel_id = $stmt->fetch(PDO::FETCH_ASSOC);
+    // // Get parcel id from parcels table
+    // $stmt = $conn->prepare("SELECT id FROM parcel WHERE titledeed_no = :titledeed");
+    // $stmt->bindParam(':titledeed', $titleDeed);
+    // $stmt->execute();
+    // $parcel_id = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // Get userID from users ownership
-    $stmt = $conn->prepare("SELECT user_id FROM ownership WHERE parcel_id = :parcel_id");
-    $stmt->bindParam(':parcel_id', $parcel_id['id']);
+    $stmt = $conn->prepare("SELECT owner_id FROM ownership WHERE titledeed_no = :titledeed AND status_id = 1");
+    $stmt->bindParam(':titledeed', $titleDeed);
     $stmt->execute();
     $owner = $stmt->fetch(PDO::FETCH_ASSOC);
 
