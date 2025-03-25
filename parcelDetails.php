@@ -161,9 +161,10 @@ function leaseAmount() {
         <?php
             if ($parcel['landtype'] === 'leasehold') {
                 echo '<script>leaseAmount();</script>';
+                echo '<script> calculate_payed_rates($parcel[titledeedno])</script>';
                 //echo '<script>alert("The details are being worked on")</script>';
             }
-            echo '<script> calculate_payed_rates($parcel[titledeedno])</script>'
+            
         ?>
         
         <div id= "parcel-details"class="details-card">

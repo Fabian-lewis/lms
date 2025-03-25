@@ -26,12 +26,12 @@ $payments = $stmt -> fetchAll(PDO :: FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Receipts</title>
-    <link rel="stylesheet" href="css/notifications.css">
+    <link rel="stylesheet" href="css/notification.css">
 </head>
 <body>
     <header>
         <div class="logo">
-            <img src="images/lms_logo2.png" alt="LMS Logo">
+            <img src="images/lms_logo2.PNG" alt="LMS Logo">
         </div>
         <div class="head">
             <h2>Payment Receipts</h2>
