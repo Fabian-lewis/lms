@@ -84,7 +84,7 @@ if ($ResultCode == 0) {
     //     exit();
     // }
 
-    $userId = $owner['user_id'];
+    $userId = $owner;
 
     // Insert payment into rate_payment table
     $query = "INSERT INTO rate_payment (user_id, titledeed_no, datepayed, amount) 
