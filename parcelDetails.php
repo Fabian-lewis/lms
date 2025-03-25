@@ -39,6 +39,7 @@ $parcel = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$parcel) {
     die("Parcel not found!");
 }
+
 ?>
 
 
@@ -89,7 +90,7 @@ function leaseAmount() {
     const startDate = "<?php echo $parcel['date_started']; ?>"; // Lease start date
     const durationMonths = <?php echo $parcel['duration']; ?>; // Lease duration in months
 
-    fetch('get_amounts.php', {
+    fetch('api/get_amounts.php', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -132,6 +133,24 @@ function leaseAmount() {
     .catch(error => {
         console.error('Error fetching data:', error);
     });
+
+    function calculate_payed_rates(String titledeedno){
+
+        // parcel_id = $parcel_id;
+
+        fetch('api/get_payed_rates.php', {
+            // encode the parcel id in the request body
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({titledeedno: titledeedno})   
+        })
+        .then(response => response.json())
+        .then(payments => {
+            console.log('Payments:', payments);
+            document.querySelector('.payment-details').innerHTML += `<p><strong>Payed Rates Amount: KSH </strong> ${payments['total_paid'].toFixed(2)}</p>`;
+        })
 }
     </script>
     
@@ -144,19 +163,32 @@ function leaseAmount() {
                 echo '<script>leaseAmount();</script>';
                 //echo '<script>alert("The details are being worked on")</script>';
             }
+            echo '<script> calculate_payed_rates($parcel[titledeedno])</script>'
         ?>
         
         <div id= "parcel-details"class="details-card">
-            <h1>Parcel Details</h1>
-            <p><strong>Title Deed Number:</strong> <?php echo htmlspecialchars($parcel['titledeedno']); ?></p>
-            <p><strong>Date Created:</strong> <?php echo htmlspecialchars($parcel['datecreated']); ?></p>
-            <p><strong>Owner:</strong> <?php echo htmlspecialchars($parcel['owner_name']); ?></p>
-            <p><strong>Land Type:</strong> <?php echo htmlspecialchars($parcel['landtype']); ?></p>
-            <p><strong>Status:</strong> <?php echo htmlspecialchars($parcel['status']); ?></p>
-            <?php if ($parcel['landtype'] === 'leasehold') : ?>
-                <p><strong>Lease Duration:</strong> <?php echo htmlspecialchars($parcel['duration']); ?> months</p>
-                <p><strong>Ending Date:</strong> <script>document.write(start+durationMonths);</script></p>
-            <?php endif; ?>
+            <div>
+                <h1>Parcel Details</h1>
+                <div>
+                    <p><strong>Title Deed Number:</strong> <?php echo htmlspecialchars($parcel['titledeedno']); ?></p>
+                    <p><strong>Date Created:</strong> <?php echo htmlspecialchars($parcel['datecreated']); ?></p>
+                    <p><strong>Owner:</strong> <?php echo htmlspecialchars($parcel['owner_name']); ?></p>
+                    <p><strong>Land Type:</strong> <?php echo htmlspecialchars($parcel['landtype']); ?></p>
+                    <p><strong>Status:</strong> <?php echo htmlspecialchars($parcel['status']); ?></p>
+                </div>
+
+                <div>
+                    <?php if ($parcel['landtype'] === 'leasehold') : ?>
+                    <p><strong>Lease Duration:</strong> <?php echo htmlspecialchars($parcel['duration']); ?> months</p>
+                    <p><strong>Ending Date:</strong> <script>document.write(start+durationMonths);</script></p>
+                    <?php endif; ?>
+                </div>
+                
+                <div class="payment-details"></div>
+            </div>
+            
+            
+           
             
         </div>
 
