@@ -88,7 +88,7 @@ if (empty($submittedForm)) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
 </head>
-<body style="background-color: #2C3E50">
+<body style="background-color: #008080">
     <header></header>
     <main>
         <?php if ($form_type == "ownership" && !empty($submittedForm)): ?>
@@ -137,7 +137,7 @@ if (empty($submittedForm)) {
             <script>
                 function acceptMutation() {
                     if (confirm("Are you sure you want to approve this mutation?")) {
-                        fetch('approveMutation.php', {
+                        fetch('api/approveMutation.php', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                             body: new URLSearchParams({
@@ -155,7 +155,7 @@ if (empty($submittedForm)) {
 
                 function rejectMutation() {
                     if (confirm("Are you sure you want to reject this mutation?")) {
-                        fetch('rejectMutation.php', {
+                        fetch('api/rejectMutation.php', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                             body: new URLSearchParams({ 
@@ -227,7 +227,7 @@ if (empty($submittedForm)) {
             <script>
                 function rejectDMutation() {
                     if (confirm("Are you sure you want to reject this mutation?")) {
-                        fetch('rejectMutation.php', {
+                        fetch('api/rejectMutation.php', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                             body: new URLSearchParams({ 
@@ -250,49 +250,6 @@ if (empty($submittedForm)) {
                 }
             </script>
         </div>
-        <!-- Map -->
-         <!--
-        <div id="map"></div>
-        <script>
-                const map = L.map('map').setView([0, 0], 13); // Note: Latitude comes before longitude
-
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                }).addTo(map);
-
-                const divisionsCoordinates = <?php// echo $submittedForm['divisions_coordinates']; ?>;
-                const parcelCoordinates = <?php //echo $submittedForm['coordinates']; ?>;
-
-                // Function to style divisions with a unique color
-function styleDivisions(feature) {
-    return {
-        color: 'blue', // Border color
-        weight: 2,     // Line thickness
-        fillColor: 'lightblue', // Fill color
-        fillOpacity: 0.4 // Transparency
-    };
-}
-
-// Function to style parcel with a unique color
-function styleParcel(feature) {
-    return {
-        color: 'green', // Border color
-        weight: 2,      // Line thickness
-        fillColor: 'lightgreen', // Fill color
-        fillOpacity: 0.4 // Transparency
-    };
-}
-
-// Add GeoJSON layers with different colors
-const divisionsLayer = L.geoJSON(divisionsCoordinates, { style: styleDivisions }).addTo(map);
-const parcelLayer = L.geoJSON(parcelCoordinates, { style: styleParcel }).addTo(map);
-
-                // Fit map to bounds of both layers
-                const allBounds = L.featureGroup([divisionsLayer, parcelLayer]).getBounds();
-                map.fitBounds(geoJsonLayer.allBounds());
-            </script>
-    </div>
-                -->
 <?php endif; ?>
 
     </main>

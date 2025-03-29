@@ -6,7 +6,7 @@ header("Content-Type: application/json");
 // }
 
 // Database connection
-require_once 'configs.php';
+require(__DIR__ . '/../configs.php');
 
 // // Get title deed from the URL parameter
 // $titleDeed = $_GET['titledeed'] ?? null;

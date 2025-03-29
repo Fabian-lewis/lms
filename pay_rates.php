@@ -22,7 +22,7 @@
 <body>
     <header>
     <div class="logo">
-            <img src="images/lms-logo2.png" alt="LMS Logo">
+            <img src="images/lms_logo2.PNG" alt="LMS Logo">
         </div>
         <div class="head">
             <h2>Rate Payment</h2>
@@ -32,7 +32,7 @@
     <main>
     <div class="pay-rates-container">
         <h3>Rate Payment Details</h3>
-        <form action="stk_push.php" method="POST">
+        <form action="api/stk_push.php" method="POST">
             <label for="fname">First Name:</label>
             <input type="text" id="fname" name="fname" required>
 

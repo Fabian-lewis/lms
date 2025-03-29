@@ -15,8 +15,28 @@ header {
     text-align: center;
 }
 
+
 header .logo img {
     width: 100px;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 10px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+nav ul li a:hover {
+    color: #F39C12; /* Change color on hover */
 }
 
 .registration-container {

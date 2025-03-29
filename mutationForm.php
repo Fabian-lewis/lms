@@ -6,6 +6,14 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+ // Database connection details
+ require 'configs.php';
+
+ 
+// Check if user is a surveyor
+
+
+
 // Check if the request method is POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mutation_type = $_POST['mutation_type'];
@@ -19,8 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $status_id = 3; // Default status for "submitted"
         $date_submitted = date('Y-m-d'); // Format date as YYYY-MM-DD
 
-        // Database connection details
-        require 'configs.php';
+       
 
         try{
 
@@ -181,7 +188,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Function to fetch and display coordinates
         function fetchAndDisplayCoordinates(titleDeed) {
-            fetch('get_coordinates.php', {
+            fetch('api/get_coordinates.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

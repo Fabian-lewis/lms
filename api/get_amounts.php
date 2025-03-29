@@ -1,11 +1,12 @@
 <?php
 header('Content-Type: application/json');
+error_reporting(E_ALL);
+ini_set('display_errors', 1); // Enable error reporting (for debugging)
 
 // Database connection
-require 'configs.php';
+require(__DIR__ . '/../configs.php');
 
-
-try{
+try {
     // Query the database
     $query = "SELECT amount, year FROM rates_distribution";
     $stmt = $conn->prepare($query);
@@ -21,10 +22,15 @@ try{
         $rates[$year] = $row['amount']; // Store 'amount' as the value
     }
 
-    // Return the data as JSON
+    // Clear any unexpected output before JSON
+    ob_clean();
+
+    // Return the JSON response
     echo json_encode($rates);
+    exit;
 
 } catch (PDOException $e) {
     echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
+    exit;
 }
 ?>

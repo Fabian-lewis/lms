@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <header>
         <div class="logo">
-            <img src="images/lms logo2.png" alt="LMS Logo">
+            <img src="images/lms_logo2.png" alt="LMS Logo">
         </div>
         <div class="head">
             <h2>Login Page</h2>
@@ -64,58 +64,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </header>
 
     <main>
-    <div class="container">
-        
+        <div class="container">
+            <?php if (!empty($error)) { echo "<p class='error'>$error</p>"; } ?>
 
-        <?php if (!empty($error)) { echo "<p class='error'>$error</p>"; } ?>
+            <div class="forms">
+                <!-- General User Login -->
+                <div class="form-section">
+                    <h3>General User Login</h3>
+                    <form action="login.php" method="POST">
+                        <label for="fname">First Name:</label>
+                        <input type="text" id="fname" name="fname" required>
 
-        <div class="forms">
-            <!-- General User Login -->
-            <div class="form-section">
-                <h3>General User Login</h3>
-                <form action="login.php" method="POST">
-                    <label for="fname">First Name:</label>
-                    <input type="text" id="fname" name="fname" required>
+                        <label for="sname">Surname:</label>
+                        <input type="text" id="sname" name="sname" required>
 
-                    <label for="sname">Surname:</label>
-                    <input type="text" id="sname" name="sname" required>
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
 
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
+                        <button type="submit">Login</button>
+                    </form>
+                </div>
 
-                    <button type="submit">Login</button>
-                </form>
+                <!-- Professional User Login -->
+                <div class="form-section">
+                    <h3>Professional User Login</h3>
+                    <form action="login.php" method="POST">
+                        <label for="fname">First Name:</label>
+                        <input type="text" id="fname" name="fname" required>
+
+                        <label for="sname">Surname:</label>
+                        <input type="text" id="sname" name="sname" required>
+
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+
+                        <label for="job_security_number">Job Security Number:</label>
+                        <input type="text" id="job_security_number" name="job_security_number" required>
+
+                        <button type="submit">Login</button>
+                    </form>
+                </div>
             </div>
-
-            <!-- Professional User Login -->
-            
         </div>
-    </div>
-    <div class="container">
-    <?php if (!empty($error)) { echo "<p class='error'>$error</p>"; } ?>
-    <div class="forms">
-    <div class="form-section">
-                <h3>Professional User Login</h3>
-                <form action="login.php" method="POST">
-                    <label for="fname">First Name:</label>
-                    <input type="text" id="fname" name="fname" required>
-
-                    <label for="sname">Surname:</label>
-                    <input type="text" id="sname" name="sname" required>
-
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
-
-                    <label for="job_security_number">Job Security Number:</label>
-                    <input type="text" id="job_security_number" name="job_security_number" required>
-
-                    <button type="submit">Login</button>
-                </form>
-            </div>
-    </div>
-    </div>
     </main>
-    
-   
 </body>
 </html>

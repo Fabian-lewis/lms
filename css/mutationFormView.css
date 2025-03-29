@@ -2,7 +2,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color:#2C3E50;
+    background-color:#008080;
     
 }
 main{
@@ -10,7 +10,7 @@ main{
     
 }
 .header{
-    background-color: #8B5E3C;
+    background-color: #222;
     padding: 10px;
     text-align: center;
     color: white;
@@ -20,7 +20,7 @@ main{
     margin: 20px auto;
     padding: 20px;
     max-width: 1200px;
-    background-color: #2C3E50;
+    background-color: #222;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     align-items: center;
@@ -34,7 +34,7 @@ main{
     margin: 20px auto;
     padding: 20px;
     max-width: 1200px;
-    background-color: #8B5E3C;
+    background-color: #333;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
 }
@@ -42,22 +42,17 @@ main{
 .details-card {
     flex: 1;
     padding: 20px;
-    background-color: #D5B895;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    color: black;
     display: flex;
     gap: 20px;
 }
 .deep-details{
     flex: 1;
     padding: 20px;
-    background-color: #F5E8DD;
+    background-color: #222;
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    color: black;
+    color: white;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -78,10 +73,11 @@ h1 {
 .details-card p {
     margin-bottom: 10px;
     line-height: 1.6;
+    color: white;
 }
 
 .details-card strong {
-    color: #333;
+    color: white;
 }
 @media (max-width: 768px) {
     .container {

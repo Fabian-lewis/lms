@@ -1,14 +1,11 @@
-*{
-    box-sizing: border-box;
-}
 body {
     font-family: Arial, sans-serif;
-    background-color: #008080;
+    background-color: #2C3E50;
     margin: 0;
     padding: 0;
 }
 header {
-    background-color: #222;
+    background-color: #333;
     color: white;
     padding: 10px 0;
     text-align: center;
@@ -44,13 +41,13 @@ nav ul li a {
     border-radius: 8px; 
     justify-content:center;
     gap: 20px;
-    background-color: #333;
+    background-color: #8B5E3C;
     align-items: center;
 }
 
 .card {
     margin: 10px;
-    background-color: #222;
+    background-color: #F5E8DD;
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -59,19 +56,18 @@ nav ul li a {
     flex-grow: 1;
     text-align: center;
     align-self: center;
-    color: white;
 }
 
 
 .card h3 {
     font-size: 30px;
     margin-bottom: 10px;
-    color: white;
+    color: #333;
 }
 
 .card p {
     font-size: 14px;
-    color: white;
+    color: #555;
 }
 button {
     

@@ -156,18 +156,19 @@ if($user){
 <body>
 <header>
         <div class="logo">
-            <img src="images/lms_logo2.png" alt="LMS Logo">
+            <img src="images/lms_logo2.PNG" alt="LMS Logo">
         </div>
         <nav>
             <ul>
                 <li><a href="index.php">Home</a></li>
                 <li><a href="profile.php">Profile</a></li>
                 <li><a href="onsaleparcels.php">Lands on Sale</a></li>
+                <li><a href="landsearch.php">Land Search</a></li>
                 <?php if($_SESSION['role'] === 'surveyor'): ?>
                     <li><a href="mutationForm.php">Mutation Forms</a></li>
                 <?php endif; ?>
                 <?php if($_SESSION['role'] === 'ministry_official'): ?>
-                    <li><a href="rate_management.php">Rates</a></li>
+                    <li><a href="lease_rates.php">Rates</a></li>
                 <?php endif; ?>
                 <li><a href="payment_receipts.php">Payment Receipts</a></li>
                 <li>
@@ -184,7 +185,9 @@ if($user){
     <div class="profile-container">
         <h2>User Profile</h2>
         <div class="profile-info">
-            <img src="images/default-profile.png" alt="Profile Picture" class="profile-pic">
+            <div class="hero-pic">
+            <img src="images/profile.jpeg" alt="Profile Picture">
+            </div>
             <div class="details">
             <p><strong>First Name:</strong> <?php echo htmlspecialchars($_SESSION['fname']); ?></p>
             <p><strong>Surname:</strong> <?php echo htmlspecialchars($_SESSION['sname']); ?></p>
@@ -218,10 +221,22 @@ if($user){
             <?php foreach ($parcels as $parcel): ?>
                 <div class="card">
                     <h3>Parcel: <?php echo $parcel['titledeedno']; ?></h3>
-                    <p><strong>Coordinates:</strong> <?php echo $parcel['coordinates']; ?></p>
+                    <!--<p><strong>Coordinates:</strong> <?php //echo $parcel['coordinates']; ?></p> -->
+                    
                     <p><strong>Date Created:</strong> <?php echo $parcel['datecreated']; ?></p>
                     <p><strong>Land Type:</strong> <?php echo $parcel['landtype']; ?></p>
-                    <p><strong>Status:</strong> <?php echo $parcel['status']; ?></p>
+                    <p class="status 
+                <?php 
+                    // Apply the appropriate class based on the status
+                    if ($parcel['status'] === 'active') {
+                        echo 'status-approved';
+                    } elseif ($parcel['status'] === 'inactive') {
+                        echo 'status-rejected';
+                    }
+                ?>
+            ">
+                <strong>Status: </strong> <?php echo $parcel['status']; ?>
+            </p>
                     <a href="parcelDetails.php?parcel_id=<?php echo $parcel['id']; ?>" class="btn btn-primary">View Details</a>
 
                 </div>
@@ -232,7 +247,7 @@ if($user){
     <?php if($_SESSION['role'] === 'surveyor'): ?>
         <div class="parcels-container">
             <h2>Land Division Mutation Forms</h2>
-            <a href="mutationForm.php"><button class="new">Create New Form</button></a>
+            <a href="mutationForm.php" class="btn">Create New Form</a>
             <div class="card-wrapper">
                 <?php foreach ($divisionForms as $form): ?>
                     <div class="card">
@@ -240,14 +255,29 @@ if($user){
                         <p><strong>Date Submitted:</strong> <?php echo $form['date_submitted']; ?></p>
                         <p><strong>Title Deed:</strong> <?php echo $form['titledeed']; ?></p>
                         <p><strong>Number of Divisions:</strong> <?php echo $form['number_of_divs']; ?></p>
-                        <p><strong>Status:</strong> <?php echo $form['status']; ?></p>
+                        <p class="status 
+                <?php 
+                    // Apply the appropriate class based on the status
+                    if ($form['status'] === 'submitted') {
+                        echo 'status-submitted';
+                    } elseif ($form['status'] === 'pending') {
+                        echo 'status-pending';
+                    } elseif ($form['status'] === 'approved') {
+                        echo 'status-approved';
+                    } elseif ($form['status'] === 'rejected') {
+                        echo 'status-rejected';
+                    }
+                ?>
+            ">
+                <strong>Status: </strong> <?php echo $form['status']; ?>
+            </p>
                     </div>
                 <?php endforeach; ?>
             
         </div>
         <div class="parcels-container">
             <h2>Ownership Change Mutation Forms</h2>
-            <a href="mutationForm.php"><button class="new">Create New Form</button></a>
+            <a href="mutationForm.php" class="btn">Create New Form</a>
             <div class="card-wrapper">
                 <?php foreach ($mutationForms as $form): ?>
                     <div class="card">
@@ -257,7 +287,22 @@ if($user){
                         <p><strong>Current Owner Nat ID:</strong><?php echo $form['current_owner_natid']?></p>
                         <p><strong>Proposed Owner:</strong> <?php echo $form['proposed_owner_name']; ?></p>
                         <p><strong>Proposed Owner Nat ID:</strong><?php echo $form['proposed_owner_natid']?></p>
-                        <p><strong>Status:</strong> <?php echo $form['status']; ?></p>
+                        <p class="status 
+                <?php 
+                    // Apply the appropriate class based on the status
+                    if ($form['status'] === 'submitted') {
+                        echo 'status-submitted';
+                    } elseif ($form['status'] === 'pending') {
+                        echo 'status-pending';
+                    } elseif ($form['status'] === 'approved') {
+                        echo 'status-approved';
+                    } elseif ($form['status'] === 'rejected') {
+                        echo 'status-rejected';
+                    }
+                ?>
+            ">
+                <strong>Status: </strong> <?php echo $form['status']; ?>
+            </p>
 
                     </div>
                 <?php endforeach; ?>
@@ -271,20 +316,33 @@ if($user){
         <div class="parcels-container">
             <h2>Land Division Mutation Forms</h2>
             <div class="card-wrapper">
-                <?php foreach ($submittedDivisionForms as $form): ?>
-                    <div class="card">
-                        <h3>Form ID: <?php echo $form['id']; ?></h3>
-                        <p><strong>Date Submitted:</strong> <?php echo $form['date_submitted']; ?></p>
-                        <p><strong>Surveyor:</strong> <?php echo $form['surveyor']; ?></p>
-                        <p><strong>Title Deed:</strong> <?php echo $form['titledeed']; ?></p>
-                        <p><strong>Number of Divisions:</strong> <?php echo $form['number_of_divs']; ?></p>
-                        <p><strong>Status:</strong> <?php echo $form['status']; ?></p>
-                        <a href="mutationFormView.php?form_id=<?php echo $form['id'];?>&form_type=<?php echo 'division'?>" class="btn btn-primary">View Details</a>
-
-                    </div>
-                <?php endforeach; ?>
-            
-            </div>
+    <?php foreach ($submittedDivisionForms as $form): ?>
+        <div class="card">
+            <h3>Form ID: <?php echo $form['id']; ?></h3>
+            <p><strong>Date Submitted:</strong> <?php echo $form['date_submitted']; ?></p>
+            <p><strong>Surveyor:</strong> <?php echo $form['surveyor']; ?></p>
+            <p><strong>Title Deed:</strong> <?php echo $form['titledeed']; ?></p>
+            <p><strong>Number of Divisions:</strong> <?php echo $form['number_of_divs']; ?></p>
+            <p class="status 
+                <?php 
+                    // Apply the appropriate class based on the status
+                    if ($form['status'] === 'submitted') {
+                        echo 'status-submitted';
+                    } elseif ($form['status'] === 'pending') {
+                        echo 'status-pending';
+                    } elseif ($form['status'] === 'approved') {
+                        echo 'status-approved';
+                    } elseif ($form['status'] === 'rejected') {
+                        echo 'status-rejected';
+                    }
+                ?>
+            ">
+                <strong>Status: </strong> <?php echo $form['status']; ?>
+            </p>
+            <a href="mutationFormView.php?form_id=<?php echo $form['id'];?>&form_type=<?php echo 'division'?>" class="btn btn-primary">View Details</a>
+        </div>
+    <?php endforeach; ?>
+</div>
         </div>
         <div class="parcels-container">
             <h2>Ownership Change Mutation Forms</h2>
@@ -296,7 +354,22 @@ if($user){
                         <p><strong>Surveyor:</strong> <?php echo $form['surveyor']; ?></p>
                         <p><strong>Current Owner:</strong> <?php echo $form['current_owner_name']; ?></p>
                         <p><strong>Proposed Owner:</strong> <?php echo $form['proposed_owner_name']; ?></p>
-                        <p><strong>Status:</strong> <?php echo $form['status']; ?></p>
+                        <p class="status 
+                <?php 
+                    // Apply the appropriate class based on the status
+                    if ($form['status'] === 'submitted') {
+                        echo 'status-submitted';
+                    } elseif ($form['status'] === 'pending') {
+                        echo 'status-pending';
+                    } elseif ($form['status'] === 'approved') {
+                        echo 'status-approved';
+                    } elseif ($form['status'] === 'rejected') {
+                        echo 'status-rejected';
+                    }
+                ?>
+            ">
+                <strong>Status: </strong> <?php echo $form['status']; ?>
+            </p>
                         <a href="mutationFormView.php?form_id=<?php echo $form['id'];?>&form_type=<?php echo 'ownership'?>" class="btn btn-primary">View Details</a>
 
                     </div>
@@ -358,8 +431,15 @@ if($user){
 // Fetch Notifications
 async function fetchNotifications() {
     try {
-        const response = await fetch('fetchNotifications.php'); // User ID is handled in PHP
-        const notifications = await response.json();
+        const response = await fetch('api/fetchNotifications.php'); // User ID is handled in PHP
+        const data = await response.json(); // Extract top-level JSON object
+
+        if (!data.success) {
+            console.error("API Error:", data.error);
+            return;
+        }
+
+        const notifications = data.notifications || []; // Extract notifications array
 
         console.log(notifications); // Debugging output
 
@@ -369,7 +449,7 @@ async function fetchNotifications() {
         // Clear existing notifications
         notificationList.innerHTML = '';
 
-        // Count unread notifications (assuming status 0 means unread)
+        // Count unread notifications (assuming status 9 means unread)
         const unreadCount = notifications.filter(n => n.status_id == 9).length;
         notificationCount.innerText = unreadCount;
 
@@ -385,10 +465,12 @@ async function fetchNotifications() {
             li.addEventListener('click', () => markAsRead(notification.id));
             notificationList.appendChild(li);
         });
+
     } catch (error) {
         console.error('Error fetching notifications:', error);
     }
 }
+
 
 
 // Mark Notification as Read

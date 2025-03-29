@@ -49,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             "PartyA" => $phone,
             "PartyB" => $shortCode,
             "PhoneNumber" => $phone,
-            "CallBackURL" => 'https://lms-system-ufsc.onrender.com/callback_url.php',
+            "CallBackURL" => 'https://lms-system-ufsc.onrender.com/api/callback_url.php',
             "AccountReference" => $titleDeed,
             "TransactionDesc" => "Land rate payment"
         ];

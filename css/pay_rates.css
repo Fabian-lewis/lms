@@ -1,11 +1,14 @@
+*{
+    box-sizing: border-box;
+}
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #2C3E50;
+    background-color: #008080;
 }
 header {
-    background-color: #333;
+    background-color: #222;
     color: white;
     padding: 10px 0;
     text-align: center;
@@ -18,10 +21,11 @@ header .logo img {
 .pay-rates-container {
     max-width: 400px;
     margin: 50px auto;
-    background: #F5E8DD;
+    background: #222;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    color: white;
 }
 
 h2 {

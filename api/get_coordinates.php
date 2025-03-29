@@ -1,8 +1,13 @@
 <?php
+// Start output buffering to prevent unintended output
+ob_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 header('Content-Type: application/json');
 
 // Database connection
-require 'configs.php';
+require(__DIR__ . '/../configs.php');
 
 try{
 
@@ -20,11 +25,13 @@ try{
     // Return the coordinates as JSON
     if ($parcelCoordinates) {
         echo json_encode(['coordinates' => json_decode($parcelCoordinates['coordinates'])]);
+        exit();
     } else {
         echo json_encode(['error' => 'No coordinates found']);
+        exit();
     }
 } catch (PDOException $e) {
     echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
+    exit();
 }
 ?>
-

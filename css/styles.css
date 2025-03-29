@@ -1,17 +1,24 @@
 /* Basic styling for LMS home page */
+* {
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
 body {
-    font-family: Arial, sans-serif;
+    font-family:'Arial, Helvetica, sans-serif';
     margin: 0;
     padding: 0;
-    background-color: #2C3E50;
-    color: #F5E8DD;
+    background-color: #008080;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 header {
-    background-color: #333;
+    background-color: #222;
     color: white;
-    padding: 10px 0;
+    padding: 20px 0;
     text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 header .logo img {
@@ -25,33 +32,46 @@ nav ul {
 
 nav ul li {
     display: inline;
-    margin: 0 10px;
+    margin: 0 15px;
 }
 
 nav ul li a {
     color: white;
     text-decoration: none;
+    transition: color 0.3s;
+}
+
+nav ul li a:hover {
+    color: #F39C12; /* Change color on hover */
 }
 
 main {
-    padding: 20px;
+    flex: 1;
+    padding: 40px 20px;
     text-align: center;
 }
 
 .welcome h1 {
-    font-size: 2em;
-    margin-bottom: 10px;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.welcome p {
+    font-size: 1.2em;
+    line-height: 1.5;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 footer {
-    background-color: #333;
+    background-color: #222;
     color: white;
     text-align: center;
-    padding: 10px;
-    position: fixed;
-    bottom: 0;
+    padding: 15px;
     width: 100%;
 }
+
 .image-shuffle {
     width: 100%;
     max-width: 600px;
@@ -62,7 +82,7 @@ footer {
 
 .image-shuffle img {
     width: 100%;
-    height: 80%;
+    height: auto; /* Changed to auto for better aspect ratio */
     border-radius: 8px;
     display: none; /* Hide all images initially */
     position: absolute;
@@ -73,4 +93,3 @@ footer {
 .image-shuffle img.active {
     display: block; /* Show only the active image */
 }
-

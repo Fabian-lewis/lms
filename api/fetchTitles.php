@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Database connection
-require 'configs.php';
+require(__DIR__ . '/../configs.php');
 
 
 $titleDeed = $_GET['title_deed'] ?? null;

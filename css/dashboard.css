@@ -1,11 +1,14 @@
+*{
+    box-sizing: border-box;
+}
 body {
     font-family: Arial, sans-serif;
-    background-color: #2C3E50;
+    background-color: #008080;
     margin: 0;
     padding: 0;
 }
 header {
-    background-color: #333;
+    background-color: #222;
     color: white;
     padding: 10px 0;
     text-align: center;
@@ -30,22 +33,35 @@ nav ul li a {
     text-decoration: none;
 }
 
+nav ul li a:hover {
+    color: #F39C12; /* Change color on hover */
+}
+
 .profile-container {
     max-width: 600px;
     margin: 50px auto;
     padding: 20px;
-    background: #F5E8DD;
+    background: #333;
+    color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     text-align: center;
 }
-
-.profile-pic {
-    width: 120px;
-    height: 120px;
+.profile-container .hero-pic {
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
+    overflow: hidden;
+    border: 10px solid #222;
+    box-shadow: 5px 7px 25px rgba(0, 0, 0, 0.5);
     margin-bottom: 20px;
 }
+.hero-pic img {
+    height: 100%;
+    width: 100%;
+    transition: 0.5s;
+}
+
 
 .details p {
     margin: 10px 0;
@@ -106,8 +122,10 @@ nav ul li a {
 
 .parcels-container {
     padding: 30px;
-    background-color: #8B5E3C;
+    background-color: #333;
     margin: 30px auto;
+    color: white;
+    text-align: center;
 
 }
 
@@ -117,32 +135,76 @@ nav ul li a {
     flex-wrap: wrap;
     border: 1px solid black;
     border-radius: 8px; 
-    justify-content: space-evenly;
+    justify-content: space-around;
+    padding: 20px;
     gap: 20px;
-    background-color: #2C3E50;
+    background-color: #008080;
 }
 
 .card {
     margin: 10px;
-    background-color: #F5E8DD;
-    border: 1px solid #ddd;
+    background-color: #222;
+    border: 1px solid #222;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
     width: 300px;
+    color: white;
     text-align: center;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.2);
 }
 
 
 .card h3 {
     font-size: 30px;
     margin-bottom: 10px;
-    color: #333;
+    color: white;
 }
 
 .card p {
     font-size: 14px;
-    color: #555;
+    color: white;
+}
+
+.card .status {
+    text-transform: uppercase;
+    font-size: 15px;
+    font-weight: bold; /* Make the status text bold */
+}
+
+.card .status-submitted {
+    color: blue; /* Color for submitted status */
+}
+
+.card .status-pending {
+    color: orange; /* Color for pending status */
+}
+
+.card .status-approved {
+    color: green; /* Color for accepted status */
+}
+
+.card .status-rejected {
+    color: red; /* Color for rejected status */
+}
+
+.btn {
+    display: inline-block; /* Make it behave like a button */
+    padding: 10px 15px; /* Add padding for button-like appearance */
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white; /* Text color */
+    text-align: center; /* Center the text */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    text-decoration: none; /* Remove underline */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+.btn:hover {
+    background-color: #0056b3; /* Darker shade on hover */
 }
 
 @media (max-width: 768px) {
@@ -201,10 +263,11 @@ nav ul li a {
     top: 60px;
     right: 20px;
     width: 300px;
-    background: white;
+    background: #222;
     border: 1px solid #ccc;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 1000;
+    color: white;
 }
 
 .notification-header {
@@ -232,7 +295,7 @@ nav ul li a {
 }
 
 #notificationList li:hover {
-    background: #f9f9f9;
+    background: #333;
 }
 
 #notificationList li.read {

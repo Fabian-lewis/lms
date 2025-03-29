@@ -85,84 +85,103 @@ if (!$parcel) {
         return totalAmount;
     }
 
-function leaseAmount() {
+    function leaseAmount() {
     const titledeed = "<?php echo $parcel['titledeedno']; ?>"; // Get the title deed number from PHP
-    const startDate = "<?php echo $parcel['date_started']; ?>"; // Lease start date
-    const durationMonths = <?php echo $parcel['duration']; ?>; // Lease duration in months
+    const startDateStr = "<?php echo $parcel['date_started']; ?>"; // Lease start date
+    const durationMonths = <?php echo (int)$parcel['duration']; ?>; // Lease duration in months
 
     fetch('api/get_amounts.php', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
     })
     .then(response => response.json())
     .then(rates => {
         console.log('Rates:', rates);
 
+        // Convert startDateStr to a JavaScript Date object
+        let startDate = new Date(startDateStr);
+        if (isNaN(startDate)) {
+            console.error("Invalid start date:", startDateStr);
+            return;
+        }
+
+        // Correctly calculate the lease end date
+        let endDate = new Date(startDate);
+        endDate.setMonth(endDate.getMonth() + durationMonths);
+
+        // Format the end date to show only YYYY-MM-DD
+        let formattedEndDate = endDate.toISOString().split('T')[0];
+
+        // Update the HTML span element with the end date
+        document.getElementById("lease-end-date").innerText = formattedEndDate;
+
         // Calculate the total amount
-        const totalAmount = calculateTotalAmount(startDate, durationMonths, rates);
-
-        // Display the result
-        const leaseDetails = document.createElement('div');
-
-        //leaseDetails.innerHTML = '<h3>Lease Payment Breakdown</h3>';
+        const totalAmount = calculateTotalAmount(startDateStr, durationMonths, rates);
 
         let total = 0;
         for (const [year, amount] of Object.entries(totalAmount)) {
-            //leaseDetails.innerHTML += `<p><strong>Year ${year}:</strong> ${amount.toFixed(2)}</p>`;
             total += amount;
         }
 
-        end_date = new Date(startDate) + durationMonths;
-
-        // Format the end date to show only the date (YYYY-MM-DD)
-        //let formatted_end_date = end_date.toISOString().split('T')[0];
-
-        leaseDetails.innerHTML = `<p><strong>End Date:</strong> ${end_date}</p>`;
-
-        
-
-        leaseDetails.innerHTML += `<p><strong>Expected Rates Amount:</strong> ${total.toFixed(2)}</p>`;
-        leaseDetails.innerHTML += '<a href="pay_rates.php"><button>Pay Rates</button></a>';
-        
-
-        // Append the lease details to the details card
-        document.querySelector('.details-card').appendChild(leaseDetails);
+        // Display the total amount in another span (optional)
+        document.querySelector(".details-card").innerHTML += `<p><strong>Expected Rates Amount:</strong> ${total.toFixed(2)}</p>`;
     })
     .catch(error => {
         console.error('Error fetching data:', error);
     });
-
-    function calculate_payed_rates(String titledeedno){
-
-        // parcel_id = $parcel_id;
-
-        fetch('api/get_payed_rates.php', {
-            // encode the parcel id in the request body
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({titledeedno: titledeedno})   
-        })
-        .then(response => response.json())
-        .then(payments => {
-            console.log('Payments:', payments);
-            document.querySelector('.payment-details').innerHTML += `<p><strong>Payed Rates Amount: KSH </strong> ${payments['total_paid'].toFixed(2)}</p>`;
-        })
 }
+
+
+function calculate_payed_rates(titledeedno) {
+    fetch('api/get_payed_rates.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({titledeedno:titledeedno})   
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("API Response:", data);
+
+        if (!data || !data.success) {
+            console.error('Error fetching payments:', data.message);
+            return;
+        }
+
+        // Ensure total_paid is a number and set default to 0
+        const totalPaid = parseFloat(data.total_paid || 0).toFixed(2);
+
+
+        // Select and update the payment details element
+        const paymentDetails = document.querySelector('.payment-details');
+        if (paymentDetails) {
+            paymentDetails.innerHTML = `<p><strong>Payed Rates Amount: KSH </strong> ${totalPaid}</p>`;
+        } else {
+            console.error("❌ Element '.payment-details' not found in the DOM.");
+        }
+    })
+    .catch(error => {
+        console.error('❌ Error fetching data:', error);
+    });
+}
+
+
     </script>
     
 </head>
-<body style="background-color: #2C3E50">
+<body style="background-color: #008080">
     <div class="container">
         <!-- Parcel Details -->
         <?php
             if ($parcel['landtype'] === 'leasehold') {
-                echo '<script>leaseAmount();</script>';
-                echo '<script> calculate_payed_rates($parcel[titledeedno])</script>';
-                //echo '<script>alert("The details are being worked on")</script>';
+               echo '<script>';
+               echo 'var parcel = ' . json_encode($parcel) . ';';
+               echo 'leaseAmount();';
+               echo 'calculate_payed_rates(parcel.titledeedno);';
+               echo '</script>';
             }
             
         ?>
@@ -181,15 +200,15 @@ function leaseAmount() {
                 <div>
                     <?php if ($parcel['landtype'] === 'leasehold') : ?>
                     <p><strong>Lease Duration:</strong> <?php echo htmlspecialchars($parcel['duration']); ?> months</p>
-                    <p><strong>Ending Date:</strong> <script>document.write(start+durationMonths);</script></p>
+                    <p><strong>Ending Date:</strong> <span id="lease-end-date">Loading...</span></p>
+
+
+                    
                     <?php endif; ?>
                 </div>
                 
                 <div class="payment-details"></div>
             </div>
-            
-            
-           
             
         </div>
 

@@ -67,15 +67,15 @@ $divisionsCoordinates = json_decode($submittedForm['divisions_coordinates'], tru
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parcel Details</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
-    <link rel="stylesheet" href="css/mutationFormView.css">
+    <link rel="stylesheet" href="css/approveDivForm.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
 </head>
-<body style="background-color: #2C3E50">
+<body style="background-color: #008080">
     <header></header>
     <main>
         <form action="process_titledeeds.php" method="POST">
-            <div class="container" style="background-color: #BDC3C7; color:black;">
+            <div class="container" style="background-color: #222; color:black;">
                 <div class="row">
                     <div class="col-md-12">
                         <h1 class="text-center text-white">Parcel Details</h1>
@@ -84,7 +84,7 @@ $divisionsCoordinates = json_decode($submittedForm['divisions_coordinates'], tru
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
-                            <div class="card-body" style="background-color: #8B5E3C; color: white; border-radius: 10px; margin: none;">
+                            <div class="card-body" style="background-color: #333; color: white; border-radius: 10px; margin: none;">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <h5 class="card-title">PARCEL DETAILS</h5>
@@ -201,7 +201,7 @@ $divisionsCoordinates = json_decode($submittedForm['divisions_coordinates'], tru
         // Function to check if a title deed exists
         async function checkTitleDeedExists(titleDeed) {
             try {
-                const response = await fetch(`fetchTitles.php?title_deed=${encodeURIComponent(titleDeed)}`);
+                const response = await fetch(`api/fetchTitles.php?title_deed=${encodeURIComponent(titleDeed)}`);
                 const data = await response.json();
                 return data.exists;
             } catch (error) {
@@ -243,7 +243,7 @@ $divisionsCoordinates = json_decode($submittedForm['divisions_coordinates'], tru
                 };
 
                 try {
-                    const response = await fetch('process_titledeeds.php', {
+                    const response = await fetch('api/process_titledeeds.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

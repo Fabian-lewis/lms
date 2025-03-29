@@ -10,18 +10,16 @@ require 'configs.php';
 
 
 $query = "SELECT
-            n.id,
-            n.sender_id,
-            n.message,
-            n.date,
-            CONCAT(sender.fname, ' ', sender.sname) AS sender_name,
-            u.phone,
-            u.email
-        FROM
-            notifications n
-        JOIN users sender ON n.sender_id = sender.id
-        JOIN users u ON n.sender_id = u.id
-        WHERE receiver_id = :receiver_id AND n.status_id = 9;";
+    n.id,
+    n.sender_id,
+    n.message,
+    n.date,
+    COALESCE(CONCAT(sender.fname, ' ', sender.sname), 'System') AS sender_name, 
+    sender.phone,
+    sender.email
+FROM notifications n
+LEFT JOIN users sender ON n.sender_id = sender.id -- Allow sender_id to be NULL
+WHERE n.receiver_id = :receiver_id AND n.status_id = 9;";
 $stmt = $conn->prepare($query);
 $stmt->bindValue(':receiver_id', $_SESSION['user_id'], PDO::PARAM_INT);
 

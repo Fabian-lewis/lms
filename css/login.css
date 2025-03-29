@@ -1,12 +1,16 @@
 /* Basic styling for centering the forms */
+* {
+    box-sizing: border-box;
+}
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #2C3E50;
+    background-color: #008080;
 }
+
 header {
-    background-color: #333;
+    background-color: #222;
     color: white;
     padding: 10px 0;
     text-align: center;
@@ -17,42 +21,57 @@ header .logo img {
 }
 
 .container {
-    max-width: 400px;
+    max-width: 1000px; /* Increased width to accommodate both forms */
     margin: 50px auto;
-    background: #F5E8DD;
-    padding: 20px;
+    background: #222;
+    padding: 40px;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+.error {
+    color: red;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.forms {
+    gap: 50px;
+    display: flex; /* Use Flexbox to arrange forms side by side */
+    justify-content: space-between; /* Space between the forms */
+}
+
+.form-section {
+    flex: 1; /* Allow each form to take equal space */
+    margin: 0 10px; /* Add margin between the forms */
+    background: #333; /* White background for each form */
+    padding: 20px; /* Padding inside each form */
+    border-radius: 8px; /* Rounded corners */
+    color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.form-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.2);
+}
+
 button {
-    background-color: #333;
-    color: white;
+    background-color: #2C3E50;
+    color: black;
     border: none;
     padding: 10px 15px;
-    margin: 5px;
+    margin: 10px auto;
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s;
+    width: 150px;
+    display: block;
 }
 
 button:hover {
-    background-color: #555;
+    background-color: #005bb5;
 }
-
-.forms{
-    margin-right: 10px;
-    align-items: center;
-}
-
-/*
-form {
-    display: none;
-}
-form.active {
-    display: block;
-}
-*/
 
 input[type="text"], input[type="password"] {
     width: 100%;

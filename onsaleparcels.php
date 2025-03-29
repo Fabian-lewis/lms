@@ -47,12 +47,12 @@ if(!$parcels){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>lands on sale</title>
-    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/onsaleparcels.css">
 </head>
 <body>
     <header>
         <div class="logo">
-            <img src="images/lms logo2.png" alt="LMS Logo">
+            <img src="images/lms_logo2.PNG" alt="LMS Logo">
         </div>
         <nav>
             <ul>

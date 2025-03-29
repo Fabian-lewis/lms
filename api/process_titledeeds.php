@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 header('Content-Type: application/json');
 
 // Database connection
-require 'configs.php';
+require(__DIR__ . '/../configs.php');
 
 // Read and decode JSON input
 $inputJSON = file_get_contents('php://input');

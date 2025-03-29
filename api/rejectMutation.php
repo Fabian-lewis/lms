@@ -13,7 +13,7 @@ if (isset($_POST['form_id']) && isset($_POST['form_type'])) {
     $form_type = $_POST['form_type'];
 
     // Database connection details
-    require 'configs.php';
+    require(__DIR__ . '/../configs.php');
 
     // Determine the table and query based on form_type
     if ($form_type == "division") {

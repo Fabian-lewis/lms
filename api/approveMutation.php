@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+require(__DIR__ . '/../configs.php');
+
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(["status" => "error", "message" => "Unauthorized access"]);
     exit();
@@ -22,8 +24,7 @@ if (isset($_POST['form_id'], $_POST['current_owner_natid'], $_POST['proposed_own
         exit();
     }
 
-    // Database connection
-    require 'configs.php';
+    
 
     try {
         // Begin transaction

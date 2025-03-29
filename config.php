@@ -1,8 +1,8 @@
 <?php
-$host = "dpg-cvfadurqf0us73fo3jf0-a";  // Your Render database host
+$host = "localhost";  // Your Render database host
 $dbname = "klms";
-$user = "klms_user";
-$password = "CRwSIcxPiQb6sz0k8ShbroeNIrPxhdu0";
+$user = "postgres";
+$password = "gredev";
 
 try {
     $pdo = new PDO("pgsql:host=$host;dbname=$dbname", $user, $password);
@@ -10,4 +10,20 @@ try {
 } catch (PDOException $e) {
     die("Database connection failed: " . $e->getMessage());
 }
+?>
+
+<!-- <?php
+// $host = getenv('DB_HOST'); // Render database hostname
+// $dbname = getenv('DB_NAME');
+// $user = getenv('DB_USER');
+// $pass = getenv('DB_PASS');
+
+// try {
+//     $conn = new PDO("pgsql:host=$host;dbname=$dbname", $user, $pass, [
+//         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+//     ]);
+// } catch (PDOException $e) {
+//     die("Database connection failed: " . $e->getMessage());
+// }
+
 ?>

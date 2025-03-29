@@ -18,7 +18,7 @@
 <body>
     <header>
         <div class="logo">
-            <img src="images/lms logo2.png" alt="LMS Logo">
+            <img src="images/lms_logo2.PNG" alt="LMS Logo">
         </div>
         <nav>
             <ul>
