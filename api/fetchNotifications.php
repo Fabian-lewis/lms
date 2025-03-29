@@ -1,8 +1,8 @@
 <?php
 // Ensure no unintended output
-ob_start();
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// ob_start();
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
 
 session_start();
 
@@ -18,7 +18,7 @@ require(__DIR__ . '/../configs.php');
 
 try {
     // Clean the output buffer to remove any whitespace or unwanted characters
-    ob_clean();
+    // ob_clean();
 
     // Prepare and execute query
     $query = "SELECT * FROM notifications WHERE receiver_id = :receiver_id AND status_id = 9 ORDER BY date DESC";

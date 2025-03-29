@@ -1,5 +1,5 @@
 <?php
-ob_start();  // Start output buffering
+// ob_start();  // Start output buffering
 session_start();
 
 // Check if the user is logged in
@@ -74,5 +74,5 @@ if (isset($_POST['form_id']) && isset($_POST['form_type'])) {
     echo json_encode(["status" => "error", "message" => "Missing required form fields."]);
 }
 
-ob_end_flush();  // Flush output buffer
+// ob_end_flush();  // Flush output buffer
 ?>

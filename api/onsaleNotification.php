@@ -1,8 +1,6 @@
 <?php
 header('Content-Type: application/json');
 
-
-
 // Database connection
 $host = "localhost";
 $port = "5432";
@@ -23,8 +21,6 @@ try {
 $data = json_decode(file_get_contents('php://input'), true);
 $parcelId =$data['parcelId'] ?? null;
 $buyerId = filter_var($data['userId'] ?? null, FILTER_VALIDATE_INT);
-
-
 
 
 if (!$parcelId || !$buyerId) {

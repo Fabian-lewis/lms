@@ -23,7 +23,7 @@ try {
     }
 
     // Clear any unexpected output before JSON
-    ob_clean();
+    // ob_clean();
 
     // Return the JSON response
     echo json_encode($rates);

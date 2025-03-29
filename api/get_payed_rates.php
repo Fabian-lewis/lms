@@ -1,8 +1,8 @@
 <?php
 // Start output buffering to prevent unintended output
-ob_start();
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// ob_start();
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
 
 header("Content-Type: application/json");
 
@@ -12,7 +12,7 @@ require(__DIR__ . '/../configs.php');
 
 // Ensure the request method is POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    ob_end_clean(); // Clean any previous output
+    // ob_end_clean(); // Clean any previous output
     echo json_encode(['success' => false, 'message' => 'Invalid request method']);
     exit();
 }
@@ -23,14 +23,14 @@ $titledeedno = $data['titledeedno'] ?? null;
 
 // Validate input
 if (!$titledeedno) {
-    ob_end_clean();
+    // ob_end_clean();
     echo json_encode(['success' => false, 'message' => 'Title Deed Number missing']);
     exit();
 }
 
 // Validate user authentication
 if (!isset($_SESSION['user_id'])) {
-    ob_end_clean();
+    // ob_end_clean();
     echo json_encode(['success' => false, 'message' => 'User not authenticated']);
     exit();
 }
@@ -58,7 +58,7 @@ try {
     ]);
     exit();
 } catch (PDOException $e) {
-    ob_end_clean();
+    // ob_end_clean();
     echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
     exit();
 }
