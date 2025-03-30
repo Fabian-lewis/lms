@@ -51,7 +51,7 @@ try {
     $total_paid = $stmt->fetch(PDO::FETCH_ASSOC);
     
     // Ensure clean JSON response
-    ob_end_clean();
+    // ob_end_clean();
     echo json_encode([
         'success' => true,
         'total_paid' => $total_paid['total_paid'] ?? 0

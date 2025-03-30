@@ -90,7 +90,7 @@ if ($ResultCode == 0) {
     $query = "INSERT INTO rate_payment (user_id, titledeed_no, datepayed, amount) 
               VALUES (:id, :titledeed, NOW(), :amount)";
     $stmt = $conn->prepare($query);
-    $stmt->bindParam(':id', $owner, PDO::PARAM_INT);
+    $stmt->bindParam(':id', $userId, PDO::PARAM_INT);
     $stmt->bindParam(':titledeed', $titleDeed, PDO::PARAM_STR);
     $stmt->bindParam(':amount', $amountPaid, PDO::PARAM_STR);
 
