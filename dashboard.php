@@ -164,6 +164,7 @@ if($user){
                 <li><a href="profile.php">Profile</a></li>
                 <li><a href="onsaleparcels.php">Lands on Sale</a></li>
                 <li><a href="landsearch.php">Land Search</a></li>
+                <li><a href="pay_rates.php">Land Search</a></li>
                 <?php if($_SESSION['role'] === 'surveyor'): ?>
                     <li><a href="mutationForm.php">Mutation Forms</a></li>
                 <?php endif; ?>
