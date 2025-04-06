@@ -201,6 +201,7 @@ nav ul li a:hover {
     border-radius: 5px; /* Rounded corners */
     text-decoration: none; /* Remove underline */
     transition: background-color 0.3s; /* Smooth transition for hover effect */
+    margin: 20px;
 }
 
 .btn:hover {

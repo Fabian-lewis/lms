@@ -222,13 +222,23 @@ function calculate_payed_rates(titledeedno) {
         const map = L.map('map').setView([0, 0], 13);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19
+            maxZoom: 13
         }).addTo(map);
 
         const parcelCoordinates = <?php echo $parcel['coordinates']; ?>;
         const geoJsonLayer = L.geoJSON(parcelCoordinates).addTo(map);
 
         map.fitBounds(geoJsonLayer.getBounds());
+
+        // Add a marker at the center of the shape
+        const center = geoJsonLayer.getBounds().getCenter();
+        L.marker(center, {
+        icon: L.icon({
+            iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41]
+        })
+        }).addTo(map).bindPopup("Parcel Center");
     </script>
 
     

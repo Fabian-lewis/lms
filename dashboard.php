@@ -164,7 +164,7 @@ if($user){
                 <li><a href="profile.php">Profile</a></li>
                 <li><a href="onsaleparcels.php">Lands on Sale</a></li>
                 <li><a href="landsearch.php">Land Search</a></li>
-                <li><a href="pay_rates.php">Land Search</a></li>
+                <li><a href="pay_rates.php">Pay Rates</a></li>
                 <?php if($_SESSION['role'] === 'surveyor'): ?>
                     <li><a href="mutationForm.php">Mutation Forms</a></li>
                 <?php endif; ?>
@@ -227,18 +227,19 @@ if($user){
                     <p><strong>Date Created:</strong> <?php echo $parcel['datecreated']; ?></p>
                     <p><strong>Land Type:</strong> <?php echo $parcel['landtype']; ?></p>
                     <p class="status 
-                <?php 
-                    // Apply the appropriate class based on the status
-                    if ($parcel['status'] === 'active') {
-                        echo 'status-approved';
-                    } elseif ($parcel['status'] === 'inactive') {
-                        echo 'status-rejected';
-                    }
-                ?>
-            ">
-                <strong>Status: </strong> <?php echo $parcel['status']; ?>
-            </p>
+                        <?php 
+                            // Apply the appropriate class based on the status
+                            if ($parcel['status'] === 'active') {
+                                echo 'status-approved';
+                            } elseif ($parcel['status'] === 'inactive') {
+                                echo 'status-rejected';
+                            }
+                        ?>
+                        ">  
+                        <strong>Status: </strong> <?php echo $parcel['status']; ?>
+                    </p>
                     <a href="parcelDetails.php?parcel_id=<?php echo $parcel['id']; ?>" class="btn btn-primary">View Details</a>
+                    <a href="api/place_Land_On_Sale.php?parcel_id=<?php echo $parcel['id']; ?>" class="btn btn-primary">Place Land For Sale</a>
 
                 </div>
             <?php endforeach; ?>
@@ -371,23 +372,6 @@ if($user){
             ">
                 <strong>Status: </strong> <?php echo $form['status']; ?>
             </p>
-                        <a href="mutationFormView.php?form_id=<?php echo $form['id'];?>&form_type=<?php echo 'ownership'?>" class="btn btn-primary">View Details</a>
-
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
-        <div class="parcels-container">
-            <h2>Lease Land Rates</h2>
-            <div class="card-wrapper">
-                <?php foreach ($submittedOwnershipForms as $form): ?>
-                    <div class="card">
-                        <h3>Form ID: <?php echo $form['id']; ?></h3>
-                        <p><strong>Date Submitted:</strong> <?php echo $form['date_submitted']; ?></p>
-                        <p><strong>Surveyor:</strong> <?php echo $form['surveyor']; ?></p>
-                        <p><strong>Current Owner:</strong> <?php echo $form['current_owner_name']; ?></p>
-                        <p><strong>Proposed Owner:</strong> <?php echo $form['proposed_owner_name']; ?></p>
-                        <p><strong>Status:</strong> <?php echo $form['status']; ?></p>
                         <a href="mutationFormView.php?form_id=<?php echo $form['id'];?>&form_type=<?php echo 'ownership'?>" class="btn btn-primary">View Details</a>
 
                     </div>

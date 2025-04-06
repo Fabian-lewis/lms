@@ -41,6 +41,9 @@ try{
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/lease_rates.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta2/js/bootstrap.bundle.min.js"></script>
+
     <title>Lease Rates</title>
     <script>
         function calculateTotalAmount(startDate, durationMonths, rates) {
@@ -150,7 +153,7 @@ try{
                         <!-- Property Information Section -->
                         <div class="card-section property-info">
                             <h4>Property Details</h4>
-                            <p data-field="owner-name"><strong>Title Deed No:</strong> <?php echo $parcel['titledeedno']; ?></p>
+                            <p data-field="titledeed"><strong>Title Deed No:</strong> <?php echo $parcel['titledeedno']; ?></p>
                             <p><strong>Date Created:</strong> <?php echo $parcel['datecreated']; ?></p>
                         </div>
             
@@ -170,77 +173,84 @@ try{
                 <?php endforeach; ?>
             </div>
         </div>
+        
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-    // Handle all notification buttons
-    document.querySelectorAll('.send-notification-btn').forEach(button => {
-        button.addEventListener('click', async function () {
-            const card = this.closest('.card');
+                console.log("🚀 DOM fully loaded and script running");
 
-            // Extract data from the card
-            const ownerName = card.querySelector('[data-field="owner-name"]').textContent.trim();
-            const phone = card.querySelector('[data-field="phone"]').textContent.trim();
-            const email = card.querySelector('[data-field="email"]').textContent.trim();
-            const titledeed = card.querySelector('[data-field="titledeed"]').textContent.trim();
+                document.querySelectorAll('.send-notification-btn').forEach(button => {
+                    console.log('✅ Button found and listener attached');
 
-            // Store the original button text
-            const originalText = this.innerHTML;
+                    button.addEventListener('click', async function (e) {
+                        e.preventDefault(); // Prevent the default anchor link behavior
 
-            // Show loading state
-            this.disabled = true;
-            this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
+                        const card = this.closest('.card');
 
-            try {
-                // Send request to API
-                const response = await fetch('api/send-notification.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ ownerName, phone, email, titledeed }),
+                        // Extract data from the card
+                        const ownerName = card.querySelector('[data-field="owner-name"]').innerText.replace(/^.*?:\s*/, '').trim();
+                        const phone = card.querySelector('[data-field="phone"]').innerText.replace(/^.*?:\s*/, '').trim();
+                        const email = card.querySelector('[data-field="email"]').innerText.replace(/^.*?:\s*/, '').trim();
+                        const titledeed = card.querySelector('[data-field="titledeed"]').innerText.replace(/^.*?:\s*/, '').trim();
+
+                        console.log({ ownerName, phone, email, titledeed });
+
+                        // Store the original button text
+                        const originalText = this.innerHTML;
+
+                        // Show loading state
+                        this.disabled = true;
+                        this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
+
+                        try {
+                            // Send request to API
+                            const response = await fetch('api/send-notification.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ ownerName, phone, email, titledeed }),
+                            });
+
+                            if (!response.ok) {
+                                throw new Error(`Server error: ${response.status}`);
+                            }
+
+                            const result = await response.json();
+
+                            if (result.success) {
+                                showAlert('Notification sent successfully!', 'success', card);
+                            } else {
+                                showAlert(`Failed to send: ${result.message}`, 'danger', card);
+                            }
+                        } catch (error) {
+                            showAlert('Network error - please try again', 'danger', card);
+                            console.error('Error:', error);
+                        } finally {
+                            this.disabled = false;
+                            this.innerHTML = originalText;
+                        }
+                    });
                 });
 
-                // Check if the response is OK before parsing JSON
-                if (!response.ok) {
-                    throw new Error(`Server error: ${response.status}`);
+
+                // Helper function to show alerts within the relevant section
+                function showAlert(message, type, referenceElement) {
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+                    alertDiv.role = 'alert';
+                    alertDiv.innerHTML = `
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    `;
+
+                    // Find the closest container or default to document body
+                    referenceElement.prepend(alertDiv);
+
+
+                    // Auto-dismiss after 5 seconds
+                    setTimeout(() => alertDiv.remove(), 15000);
                 }
-
-                const result = await response.json();
-
-                if (result.success) {
-                    showAlert('Notification sent successfully!', 'success', card);
-                } else {
-                    showAlert(`Failed to send: ${result.message}`, 'danger', card);
-                }
-            } catch (error) {
-                showAlert('Network error - please try again', 'danger', card);
-                console.error('Error:', error);
-            } finally {
-                // Restore button state
-                this.disabled = false;
-                this.innerHTML = originalText;
-            }
-        });
-    });
-
-    // Helper function to show alerts within the relevant section
-    function showAlert(message, type, referenceElement) {
-        const alertDiv = document.createElement('div');
-        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-        alertDiv.role = 'alert';
-        alertDiv.innerHTML = `
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        `;
-
-        // Find the closest container or default to document body
-        const container = referenceElement.closest('.parcels-container') || document.body;
-        container.prepend(alertDiv);
-
-        // Auto-dismiss after 5 seconds
-        setTimeout(() => alertDiv.remove(), 5000);
-    }
-});
+            });
 
         </script>
     </body>

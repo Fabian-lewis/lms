@@ -26,11 +26,11 @@ $query = "SELECT
         FROM
             parcel p
         JOIN ownership o ON p.titledeedno = o.titledeed_no
-        JOIN status s ON o.status_id = s.id
+        JOIN status s ON p.statusid = s.id
         JOIN landtype l ON p.landtypeid = l.id
         JOIN users owner ON o.owner_id = owner.id
         WHERE
-            s.status = 'active'";
+            s.status = 'active-onsale'";
 
 $stmt = $conn->prepare($query);
 $stmt->execute();
@@ -110,6 +110,16 @@ if(!$parcels){
                             
                             const geoJsonLayer = L.geoJSON(coordinates).addTo(map);
                             map.fitBounds(geoJsonLayer.getBounds());
+
+                            // Add a marker at the center of the shape
+                            const center = geoJsonLayer.getBounds().getCenter();
+                            L.marker(center, {
+                            icon: L.icon({
+                                iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
+                                iconSize: [25, 41],
+                                iconAnchor: [12, 41]
+                            })
+                            }).addTo(map).bindPopup("Parcel Center");
                         }
                     } catch (error) {
                         console.error('Error initializing map:', error);
@@ -123,21 +133,6 @@ if(!$parcels){
 <!-- Leaflet JS (make sure this is loaded) -->
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
         <script>
-            
-            // document.querySelectorAll('.map-container').forEach((mapDiv, index) => {
-            //     const parcelCoordinates = <?php echo ($parcel['coordinates']); ?>;
-
-
-            //     const map = L.map(mapDiv).setView([0, 0], 13);
-
-            //     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            //         maxZoom: 19
-            //     }).addTo(map);
-
-            //     const geoJsonLayer = L.geoJSON(parcelCoordinates).addTo(map);
-            //     map.fitBounds(geoJsonLayer.getBounds());
-            // });
-
     
             function notifyOwner(parcelId, userId) {
                 console.log("Parcel ID:", parcelId, "User ID:", userId);  // Debugging output
