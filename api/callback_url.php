@@ -79,23 +79,10 @@ if ($ResultCode == 0) {
     $stmt->bindParam(':amount', $amountPaid, PDO::PARAM_STR);
 
     if ($stmt->execute()) {
-        // Store success message in session
-        $_SESSION['alert'] = [
-            'type' => 'success',
-            'message' => 'Payment received successfully'
-        ];
-        // Redirect to dashboard
-        header('Location: dashboard.php');
-        exit(); // Ensure no further code execution
+        echo json_encode(['message' => 'Payment received successfully']);
+        header('location:payment_receipts.php');
     } else {
-        // Store failure message in session
-        $_SESSION['alert'] = [
-            'type' => 'danger',
-            'message' => 'Failed to save payment'
-        ];
-        // Redirect to dashboard
-        header('Location: dashboard.php');
-        exit(); // Ensure no further code execution
+        echo json_encode(['message' => 'Failed to save payment']);
     }
 } else {
     echo json_encode(['message' => 'Payment failed']);
@@ -103,5 +90,6 @@ if ($ResultCode == 0) {
 
 // Ensure response is sent to M-Pesa
 http_response_code(200);
+header('Location: payment_receipts.php');
 exit();
 ?>
