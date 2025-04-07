@@ -40,10 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo '<script>
                     alert("Sucess User has been registered successfully");
                 </script>';
-            
         } else {
             echo "Error: Could not register the user.";
         }
+        header("Location: login.php"); // Redirect to login page after successful registration
+        exit();
     } catch (PDOException $e) {
         echo "Error: " . $e->getMessage();
     }

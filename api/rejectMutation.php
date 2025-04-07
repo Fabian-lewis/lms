@@ -4,7 +4,8 @@ session_start();
 
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
-    die("Unauthorized Access!");
+    echo json_encode(["status" => "error", "message" => "Unauthorized access"]);
+    exit();
 }
 
 // Check if form_id and form_type are set in the POST request

@@ -1,5 +1,11 @@
 <?php
 session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
 header('Content-Type: application/json');
 
 require(__DIR__ . '/../configs.php');

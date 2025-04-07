@@ -3,10 +3,12 @@
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("HTTP/1.1 401 Unauthorized");
+    header("Location: login.php");
     exit();
 }
 
+require_once('auth/check_role.php');
+requireRole(['ministry_official']);
 
 require 'configs.php';
 

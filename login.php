@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['role'] = $user['role'];
         header("Location: dashboard.php"); // Redirect to dashboard
-        exit;
+        exit();
     } else {
         $error = "Invalid login credentials.";
     }
@@ -61,6 +61,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="head">
             <h2>Login Page</h2>
         </div>
+        <nav>
+            <ul>
+                <li><a href="index.php">Home</a></li>
+                <li><a href="register.php">Register</a></li>
+            </ul>
+        </nav>
     </header>
 
     <main>

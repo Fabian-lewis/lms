@@ -1,13 +1,16 @@
 <?php
-// Start output buffering to prevent unintended output
-// ob_start();
-// error_reporting(E_ALL);
-// ini_set('display_errors', 1);
+// Start session
+session_start();
 
 header("Content-Type: application/json");
 
-// Start session
-session_start();
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(["status" => "error", "message" => "Unauthorized access"]);
+    exit();
+}
+
+
+
 require(__DIR__ . '/../configs.php');
 
 // Ensure the request method is POST

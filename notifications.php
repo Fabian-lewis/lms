@@ -2,9 +2,10 @@
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: dashboard.php");
+    header("Location: login.php");
     exit();
 }
+
 // Database connection
 require 'configs.php';
 

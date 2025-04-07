@@ -3,9 +3,13 @@
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: dashboard.php");
+    header("Location: login.php");
     exit();
 }
+
+
+require_once('auth/check_role.php');
+requireRole(['ministry_official']); // Ensure the user has the required role
 
 // Database connection
 require 'configs.php';

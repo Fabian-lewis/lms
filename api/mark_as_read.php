@@ -4,6 +4,13 @@ require(__DIR__ . '/../configs.php');
 
 header("Content-Type: application/json");
 
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(["status" => "error", "message" => "Unauthorized access"]);
+    exit();
+}
+
+
+
 // Check if the request method is POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'message' => 'Invalid request method']);

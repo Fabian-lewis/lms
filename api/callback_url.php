@@ -1,15 +1,15 @@
 <?php
+session_start();
 header("Content-Type: application/json");
-// session_start();
-// if(!isset($_SESSION['user_id'])){
-//     header('location:stk_push.php');
-// }
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
 
 // Database connection
 require(__DIR__ . '/../configs.php');
 
-// // Get title deed from the URL parameter
-// $titleDeed = $_GET['titledeed'] ?? null;
+
 
 // Log M-Pesa Response
 $mpesaResponse = file_get_contents("php://input");
@@ -55,11 +55,7 @@ if ($ResultCode == 0) {
         exit();
     }
 
-    // // Get parcel id from parcels table
-    // $stmt = $conn->prepare("SELECT id FROM parcel WHERE titledeed_no = :titledeed");
-    // $stmt->bindParam(':titledeed', $titleDeed);
-    // $stmt->execute();
-    // $parcel_id = $stmt->fetch(PDO::FETCH_ASSOC);
+   
 
     // Get userID from users ownership
     $stmt = $conn->prepare("SELECT owner_id FROM ownership WHERE titledeed_no = :titledeed AND status_id = 1");
@@ -72,18 +68,6 @@ if ($ResultCode == 0) {
             exit();
     }
 
-
-    // // Get parcel id from parcels table
-    // $stmt = $conn->prepare("SELECT user_id FROM parcels WHERE titledeed_no = :titledeed");
-    // $stmt->bindParam(':titledeed', $titleDeed);
-    // $stmt->execute();
-    // $owner = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    // if (!$owner) {
-    //     echo json_encode(['message' => 'Owner not found for this title deed']);
-    //     exit();
-    // }
-
     $userId = $owner['owner_id'];
 
     // Insert payment into rate_payment table
@@ -95,9 +79,23 @@ if ($ResultCode == 0) {
     $stmt->bindParam(':amount', $amountPaid, PDO::PARAM_STR);
 
     if ($stmt->execute()) {
-        echo json_encode(['message' => 'Payment received successfully']);
+        // Store success message in session
+        $_SESSION['alert'] = [
+            'type' => 'success',
+            'message' => 'Payment received successfully'
+        ];
+        // Redirect to dashboard
+        header('Location: dashboard.php');
+        exit(); // Ensure no further code execution
     } else {
-        echo json_encode(['message' => 'Failed to save payment']);
+        // Store failure message in session
+        $_SESSION['alert'] = [
+            'type' => 'danger',
+            'message' => 'Failed to save payment'
+        ];
+        // Redirect to dashboard
+        header('Location: dashboard.php');
+        exit(); // Ensure no further code execution
     }
 } else {
     echo json_encode(['message' => 'Payment failed']);

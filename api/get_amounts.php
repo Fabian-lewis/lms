@@ -1,5 +1,13 @@
 <?php
+session_start();
+
 header('Content-Type: application/json');
+
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(["status" => "error", "message" => "Unauthorized access"]);
+    exit();
+}
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1); // Enable error reporting (for debugging)
 

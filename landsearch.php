@@ -1,6 +1,12 @@
 <?php
 // Database connection
 session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
 require 'configs.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

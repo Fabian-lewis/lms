@@ -1,17 +1,17 @@
 <?php
 // Start session and check user authentication
 session_start();
+
 if (!isset($_SESSION['user_id'])) {
-    header("Location: dashboard.php");
+    header("Location: login.php");
     exit();
 }
 
+require_once('auth/check_role.php');
+requireRole(['surveyor']);
+
  // Database connection details
  require 'configs.php';
-
- 
-// Check if user is a surveyor
-
 
 
 // Check if the request method is POST

@@ -1,6 +1,62 @@
 *{
     box-sizing: border-box;
 }
+
+/* Custom Styling for Alert */
+.custom-alert {
+    margin: 20px auto;  /* Center it with margin */
+    max-width: 80%;  /* Limit the width */
+    padding: 15px 25px;  /* Add some padding */
+    border-radius: 8px;  /* Rounded corners for a cleaner look */
+    font-size: 16px;  /* Make the text more readable */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* Add subtle shadow for depth */
+    transition: transform 0.3s ease-in-out;  /* Smooth transition effect */
+}
+
+/* Optional: Style for success and error alerts */
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+/* Hover effect for the alert box */
+.custom-alert:hover {
+    transform: translateY(-5px);  /* Lift the alert slightly on hover */
+}
+
+/* Button close styling */
+.btn-close {
+    background-color: red; /* No background color */
+    border: none; /* Remove border */
+    color: #000; /* Set text color for 'X' */
+    font-size: 1.5rem; /* Increase the size of the 'X' */
+    opacity: 1;
+    position: relative;
+}
+
+.btn-close:hover {
+    opacity: 1;
+}
+
+/* Optional: Center the alert inside a container */
+.container-alert {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;  /* Ensure it's on top of other content */
+}
+
+
+
+
 body {
     font-family: Arial, sans-serif;
     background-color: #008080;

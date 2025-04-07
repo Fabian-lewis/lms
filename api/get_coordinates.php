@@ -1,10 +1,17 @@
 <?php
 // Start output buffering to prevent unintended output
+session_start();
+
 ob_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 header('Content-Type: application/json');
+
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(["status" => "error", "message" => "Unauthorized access"]);
+    exit();
+}
 
 // Database connection
 require(__DIR__ . '/../configs.php');

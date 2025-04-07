@@ -2,8 +2,23 @@
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php") || header("Location: mutationFormView.php");
+    header("Location: login.php");
     exit();
+}
+
+if (isset($_SESSION['alert'])) {
+    $alert = $_SESSION['alert'];
+    
+    // Determine the message type
+    $alertType = ($alert['type'] === 'success') ? 'Success!' : 'Error!';
+    
+    // Output the alert
+    echo "<div class='alert alert-{$alert['type']} alert-dismissible fade show custom-alert' role='alert'>
+            <strong>{$alertType}</strong> {$alert['message']}
+            <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+          </div>";
+    
+    unset($_SESSION['alert']); // Clear it so it doesn't show again
 }
 
 // Database connection
@@ -177,6 +192,7 @@ if($user){
                     <img src="images/small_notification.png" alt="Notifications">
                     <span id="notificationCount">0</span> <!-- Badge for unread notifications -->
                 </button>
+                <li><a href="logout.php">Logout</a></li>
                 </li>
             </ul>
         </nav>
@@ -490,6 +506,9 @@ fetchNotifications();
     </script>
 
     </main>
-    
+    <!-- Bootstrap 5 JavaScript CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  
 </body>
 </html>

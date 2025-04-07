@@ -1,9 +1,11 @@
 <?php
 
 session_start(); // Start the session
-if(!isset($_SESSION['user_id'])){
-    header('location:dashboard.php');
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
 }
+
 
 // Gett the user id from the session
 $user_id = $_SESSION['user_id'];

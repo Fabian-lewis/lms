@@ -3,9 +3,13 @@ session_start();
 
 // Redirect if user is not logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: mutationFormView.php");
+    header("Location: login.php");
     exit();
 }
+
+
+require_once('auth/check_role.php');
+requireRole(['ministry_official']);
 
 // Database connection
 require 'configs.php';
