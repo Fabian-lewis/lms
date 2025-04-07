@@ -1,9 +1,6 @@
 <?php
 header("Content-Type: application/json");
-// session_start();
-// if(!isset($_SESSION['user_id'])){
-//     header('location:stk_push.php');
-// }
+
 
 // Database connection
 require(__DIR__ . '/../configs.php');
@@ -67,6 +64,7 @@ if ($ResultCode == 0) {
             exit();
     }
 
+
     $userId = $owner['owner_id'];
 
     // Insert payment into rate_payment table
@@ -79,7 +77,6 @@ if ($ResultCode == 0) {
 
     if ($stmt->execute()) {
         echo json_encode(['message' => 'Payment received successfully']);
-        header('location:payment_receipts.php');
     } else {
         echo json_encode(['message' => 'Failed to save payment']);
     }
