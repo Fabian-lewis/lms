@@ -90,6 +90,5 @@ if ($ResultCode == 0) {
 
 // Ensure response is sent to M-Pesa
 http_response_code(200);
-header('Location: payment_receipts.php');
 exit();
 ?>
