@@ -29,6 +29,6 @@ if ($stmt->rowCount() > 0) {
 } else {
     $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Failed to update parcel status.'];
 }
-header('Location: ../dashboard.php');
+header('Location: /dashboard.php');
 exit();
 ?>
