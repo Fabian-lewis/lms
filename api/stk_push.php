@@ -75,19 +75,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $response = stkPush($phone, $amount, $titleDeed);
-    // if ($response->ResponseCode == 0) {
-    //     header('location:dashboard.php');
-    // } else {
-    //     echo "Failed to initiate payment";
-    // }
-
-// # access token
-// $consumerKey = getenv('CONS_KEY');; //Fill with your app Consumer Key
-// $consumerSecret = getenv('CONS_SEC');; // Fill with your app Secret
-// $BusinessShortCode = '174379';
-// $Passkey = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919';  
-// # callback url
-// $CallBackURL = 'https://lms-system-ufsc.onrender.com/callback_url.php';    
+    if ($response->ResponseCode == 0) {
+        header('location:dashboard.php');
+    } else {
+        echo "Failed to initiate payment";
+    }   
 }
 ?>
 

@@ -1,10 +1,9 @@
 <?php
-session_start();
 header("Content-Type: application/json");
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit();
-}
+// session_start();
+// if(!isset($_SESSION['user_id'])){
+//     header('location:stk_push.php');
+// }
 
 // Database connection
 require(__DIR__ . '/../configs.php');
