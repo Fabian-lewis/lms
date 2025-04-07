@@ -75,11 +75,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $response = stkPush($phone, $amount, $titleDeed);
-    if ($response->ResponseCode == 0) {
-        header('location:/dashboard.php');
-    } else {
-        echo "Failed to initiate payment";
-    }   
+    // if ($response->ResponseCode == 0) {
+    //     header('location:/dashboard.php');
+    // } else {
+    //     echo "Failed to initiate payment";
+    // }   
 }
 ?>
 
