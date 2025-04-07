@@ -15,7 +15,7 @@ function requireRole($allowedRoles = []) {
             'type' => 'danger',
             'message' => 'Unauthorized access!'
         ];
-        header("Location: /lms/dashboard.php");
+        header("Location: /dashboard.php");
         exit();
     }
 }
