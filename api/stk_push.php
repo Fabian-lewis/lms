@@ -74,25 +74,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $response = stkPush($phone, $amount, $titleDeed);
-    // if (isset($response->ResponseCode) && $response->ResponseCode == "0") {
-    //     // Store a session flag to show alert on dashboard
-    //     session_start();
-    //     $_SESSION['stk_status'] = "STK Push sent. Please check your phone to complete payment.";
+    if (isset($response->ResponseCode) && $response->ResponseCode == "0") {
+        // Store a session flag to show alert on dashboard
+        session_start();
+        $_SESSION['stk_status'] = "STK Push sent. Please check your phone to complete payment.";
     
-    //     header("Location: /dashboard.php");
-    //     exit();
-    // } else {
-    //     echo "Failed to initiate payment. Please try again.";
-    // }
-
-
-// # access token
-// $consumerKey = getenv('CONS_KEY');; //Fill with your app Consumer Key
-// $consumerSecret = getenv('CONS_SEC');; // Fill with your app Secret
-// $BusinessShortCode = '174379';
-// $Passkey = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919';  
-// # callback url
-// $CallBackURL = 'https://lms-system-ufsc.onrender.com/callback_url.php';    
+        header("Location: /dashboard.php");
+        exit();
+    } else {
+        echo "Failed to initiate payment. Please try again.";
+    }  
 }
 ?>
 
