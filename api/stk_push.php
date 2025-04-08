@@ -81,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         session_start();
         $_SESSION['stk_status'] = "STK Push sent. Please check your phone to complete payment.";
     
-        header("Location: dashboard.php");
+        header("Location: lms/dashboard.php");
         exit();
     } else {
         echo "Failed to initiate payment. Please try again.";
