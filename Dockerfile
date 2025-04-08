@@ -18,8 +18,14 @@ COPY . /var/www/html/
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
-# Expose port 80
-EXPOSE 80
+# Set environment variable for Render port (default to 80 for local dev)
+ENV PORT=80
 
-# Start Apache
-CMD ["apache2-foreground"]
+# Expose the port (informational)
+EXPOSE ${PORT}
+
+# Dynamically update Apache config to use the Render-assigned port
+CMD ["/bin/bash", "-c", "\
+  sed -i \"s/Listen 80/Listen ${PORT}/\" /etc/apache2/ports.conf && \
+  sed -i \"s/<VirtualHost \\*:80>/<VirtualHost *:${PORT}>/\" /etc/apache2/sites-available/000-default.conf && \
+  apache2-foreground"]
