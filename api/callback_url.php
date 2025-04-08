@@ -9,8 +9,15 @@ $mpesaResponse = file_get_contents("php://input");
 $logFile = "mpesa_callback.json";
 file_put_contents($logFile, $mpesaResponse . PHP_EOL, FILE_APPEND);
 
+// Get the current timestamp for logging
+$timestamp = date("Y-m-d H:i:s");
+$logEntry = "Callback received at {$timestamp}";
+
 // Decode the incoming JSON response
 $response = json_decode($mpesaResponse, true);
+
+// Log the incoming response
+file_put_contents('mpesa_log.txt', "{$logEntry} - Incoming Response: " . json_encode($response) . PHP_EOL, FILE_APPEND);
 
 // Helper function to safely extract values
 function getMpesaValue($items, $key) {
@@ -24,7 +31,9 @@ function getMpesaValue($items, $key) {
 
 // Check if the response is valid and contains the expected data
 if (!$response || !isset($response['Body']['stkCallback']['ResultCode'])) {
-    echo json_encode(['message' => 'Invalid response received']);
+    $errorMessage = "Invalid response received or missing 'ResultCode'";
+    file_put_contents('mpesa_log.txt', "{$logEntry} - ERROR: {$errorMessage}" . PHP_EOL, FILE_APPEND);
+    echo json_encode(['message' => $errorMessage]);
     exit();
 }
 
@@ -38,9 +47,15 @@ if ($ResultCode == 0) {
     $phoneNumber = getMpesaValue($items, "PhoneNumber");
     $titleDeed = getMpesaValue($items, "AccountReference");
 
+    // Log payment details
+    $paymentLog = "Amount: {$amountPaid}, Receipt: {$receiptNumber}, Phone: {$phoneNumber}, Title Deed: {$titleDeed}";
+    file_put_contents('mpesa_log.txt', "{$logEntry} - Payment Details: {$paymentLog}" . PHP_EOL, FILE_APPEND);
+
     // Check if required data is present
     if (!$amountPaid || !$receiptNumber || !$phoneNumber || !$titleDeed) {
-        echo json_encode(['message' => 'Missing required payment details']);
+        $errorMessage = "Missing required payment details";
+        file_put_contents('mpesa_log.txt', "{$logEntry} - ERROR: {$errorMessage}" . PHP_EOL, FILE_APPEND);
+        echo json_encode(['message' => $errorMessage]);
         exit();
     }
 
@@ -51,7 +66,9 @@ if ($ResultCode == 0) {
     $owner = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$owner) {
-        echo json_encode(['message' => 'Owner not found for this title deed']);
+        $errorMessage = "Owner not found for this title deed";
+        file_put_contents('mpesa_log.txt', "{$logEntry} - ERROR: {$errorMessage}" . PHP_EOL, FILE_APPEND);
+        echo json_encode(['message' => $errorMessage]);
         exit();
     }
 
@@ -65,12 +82,26 @@ if ($ResultCode == 0) {
     $stmt->bindParam(':titledeed', $titleDeed, PDO::PARAM_STR);
     $stmt->bindParam(':amount', $amountPaid, PDO::PARAM_INT); // Ensure this is an integer
 
-    if ($stmt->execute()) {
-        echo json_encode(['message' => 'Payment received successfully']);
-    } else {
+    try {
+        if ($stmt->execute()) {
+            $successMessage = "Payment received successfully";
+            file_put_contents('mpesa_log.txt', "{$logEntry} - SUCCESS: {$successMessage}" . PHP_EOL, FILE_APPEND);
+            echo json_encode(['message' => $successMessage]);
+        } else {
+            $errorInfo = $stmt->errorInfo();
+            $errorMessage = "Failed to save payment. DB Error: " . json_encode($errorInfo);
+            file_put_contents('mpesa_log.txt', "{$logEntry} - ERROR: {$errorMessage}" . PHP_EOL, FILE_APPEND);
+            echo json_encode(['message' => 'Failed to save payment']);
+        }
+    } catch (Exception $e) {
+        $errorMessage = "Exception occurred: " . $e->getMessage();
+        file_put_contents('mpesa_log.txt', "{$logEntry} - ERROR: {$errorMessage}" . PHP_EOL, FILE_APPEND);
         echo json_encode(['message' => 'Failed to save payment']);
     }
+
 } else {
+    $errorMessage = "Payment failed. ResultCode: {$ResultCode}";
+    file_put_contents('mpesa_log.txt', "{$logEntry} - ERROR: {$errorMessage}" . PHP_EOL, FILE_APPEND);
     echo json_encode(['message' => 'Payment failed']);
 }
 
