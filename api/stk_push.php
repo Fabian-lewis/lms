@@ -1,8 +1,7 @@
 <?php
-// session_start();
-// if (!isset($_SESSION['user_id'])) {
-//     header("Location: login.php");
-//     exit();
+session_start();
+// if(!isset($_SESSION['user_id'])){
+//     header('location:pay_rates.php');
 // }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -50,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             "PartyA" => $phone,
             "PartyB" => $shortCode,
             "PhoneNumber" => $phone,
-            "CallBackURL" => "https://lms-system-ufsc.onrender.com/api/callback_url.php",
+            "CallBackURL" => 'https://lms-system-ufsc.onrender.com/callback_url.php',
             "AccountReference" => $titleDeed,
             "TransactionDesc" => "Land rate payment"
         ];
@@ -75,20 +74,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $response = stkPush($phone, $amount, $titleDeed);
+    // if (isset($response->ResponseCode) && $response->ResponseCode == "0") {
+    //     // Store a session flag to show alert on dashboard
+    //     session_start();
+    //     $_SESSION['stk_status'] = "STK Push sent. Please check your phone to complete payment.";
     
-    if (isset($response->ResponseCode) && $response->ResponseCode == "0") {
-        // Store a session flag to show alert on dashboard
-        session_start();
-        $_SESSION['stk_status'] = "STK Push sent. Please check your phone to complete payment.";
-    
-        header("Location: /dashboard.php");
-        exit();
-    } else {
-        echo "Failed to initiate payment. Please try again.";
-    }
+    //     header("Location: /dashboard.php");
+    //     exit();
+    // } else {
+    //     echo "Failed to initiate payment. Please try again.";
+    // }
+
+
+// # access token
+// $consumerKey = getenv('CONS_KEY');; //Fill with your app Consumer Key
+// $consumerSecret = getenv('CONS_SEC');; // Fill with your app Secret
+// $BusinessShortCode = '174379';
+// $Passkey = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919';  
+// # callback url
+// $CallBackURL = 'https://lms-system-ufsc.onrender.com/callback_url.php';    
 }
 ?>
 
+
+
+ 
+  
 
 
  
