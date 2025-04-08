@@ -20,6 +20,10 @@ if (isset($_SESSION['alert'])) {
     
     unset($_SESSION['alert']); // Clear it so it doesn't show again
 }
+if (isset($_SESSION['stk_status'])) {
+    echo "<script>alert('" . $_SESSION['stk_status'] . "');</script>";
+    unset($_SESSION['stk_status']); // Clear after showing
+}
 
 // Database connection
 require 'configs.php';

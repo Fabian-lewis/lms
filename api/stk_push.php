@@ -50,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             "PartyA" => $phone,
             "PartyB" => $shortCode,
             "PhoneNumber" => $phone,
-            "CallBackURL" => 'https://lms-system-ufsc.onrender.com/api/callback_url.php',
+            "CallBackURL" => "https://lms-system-ufsc.onrender.com/api/callback_url.php",
             "AccountReference" => $titleDeed,
             "TransactionDesc" => "Land rate payment"
         ];
@@ -75,11 +75,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $response = stkPush($phone, $amount, $titleDeed);
-    // if ($response->ResponseCode == 0) {
-    //     header('location:/dashboard.php');
-    // } else {
-    //     echo "Failed to initiate payment";
-    // }   
+    
+    if (isset($response->ResponseCode) && $response->ResponseCode == "0") {
+        // Store a session flag to show alert on dashboard
+        session_start();
+        $_SESSION['stk_status'] = "STK Push sent. Please check your phone to complete payment.";
+    
+        header("Location: dashboard.php");
+        exit();
+    } else {
+        echo "Failed to initiate payment. Please try again.";
+    }
 }
 ?>
 
