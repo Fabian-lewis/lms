@@ -75,10 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $response = stkPush($phone, $amount, $titleDeed);
     if (isset($response->ResponseCode) && $response->ResponseCode == "0") {
-        // Store a session flag to show alert on dashboard
-        session_start();
         $_SESSION['stk_status'] = "STK Push sent. Please check your phone to complete payment.";
-    
         header("Location: /dashboard.php");
         exit();
     } else {
